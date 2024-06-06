@@ -1,0 +1,77 @@
+Phrase	SoundsLike	IPA	DisplayAs
+Aubameyang	oba-me-jang		Aubameyang
+Glasner	glas-na		Glasner
+Oliver-Glasner	oliver-glas-na		Oliver Glasner
+Toure	turee		Touré
+Toure	theorie		Touré
+Tuta	tuta		Tuta
+Sow	soh		Sow
+Camp-Nou	kamb-nau		Camp Nou
+Frenkie-de-Jong	frenki-de-jong		Frenkie de Jong
+De-Jong	de-jong		de Jong
+Pedri	petri		Pedri
+Startelf	staat-elf		Startelf
+Start	schtaat		Start
+Was-für-ein-Start-für-die-Eintracht	was-für-ein-Start-für-die-Ein-tracht		Was für ein Start für die Eintracht
+Borre	bore		Borré
+Borre	boo-ree		Borré
+Borre	dori		Borré
+Pfiff	fiff		Pfiff
+Frankfurt	frank-furt		Frankfurt
+Eric-Garcia	erikasia		Eric García
+Marc-Andre-Ter-Stegen	mark-andre-ter-stegen		Mark-André ter Stegen
+Ter-Stegen	ter-stegen		ter Stegen
+Ter-Stegen	testen		ter Stegen
+Filip-Kostic	filip-kostitsch		Filip Kostic
+Kostic	kos-teeetsch		Kostic
+Filip	fälle		Filip
+Kalt	kat		kalt
+Halbzeit	halb-zeit		Halbzeit
+Richtig	wichtig		richtig
+Drei-zu-null	drei-zu-null		3-0
+Drei-zu-eins	drei-zu-eins		3-1
+Drei-zu-zwei	drei-zu-zwei		3-2
+Zwei-zu-null	zwei-zu-null		2-0
+Zwei-zu-drei	zwei-zu-drei		2-3
+Eins-zu-null	eins-zu-null		1-0
+Eins-zu-drei	eins-zu-drei		1-3
+Drei-null	drei-null		3-0
+Drei-eins	drei-eins		3-1
+Drei-zwei	drei-zwei		3-2
+Zwei-null	zwei-null		2-0
+Zwei-drei	zwei-drei		2-3
+Eins-null	eins-null		1-0
+Eins-drei	eins-drei		1-3
+Drei-zu-null	dreizunull		3-0
+Drei-zu-eins	dreizueins		3-1
+Drei-zu-zwei	dreizuzwei		3-2
+Zwei-zu-null	zweizunull		2-0
+Zwei-zu-drei	zweizudrei		2-3
+Eins-zu-null	einszunull		1-0
+Eins-zu-drei	einszudrei		1-3
+Drei-null	dreinull		3-0
+Drei-eins	dreieins		3-1
+Drei-zwei	dreizwei		3-2
+Zwei-null	zweinull		2-0
+Zwei-drei	zweidrei		2-3
+Eins-null	einsnull		1-0
+Eins-drei	einsdrei		1-3
+Eins-drei	eins-drei-eins		1-3
+Barca	bassa		Barca
+Barca	bas		Barca
+Knauff	knauf		Knauff
+Busquets	bus-kets		Busquets
+Abseits	ab-seits		Abseits
+Foul	faul		Foul
+Foul-an	faul-an		Foul an
+Ndicka	in-dicker		Ndicka
+Depay	de-pai		Depay
+Rängen	ringen		Rängen
+Rängen	rengen		Rängen
+Rängen	ring		Rängen
+Rängen	reng		Rängen
+Rängen	engen		Rängen
+Videoschiedsrichter	video-schieds-richter		Videoschiedsrichter
+Kriegt	krig		kriegt
+Greifbarer	kreif-barer		greifbarer
+Llambi	lambi		Llambi

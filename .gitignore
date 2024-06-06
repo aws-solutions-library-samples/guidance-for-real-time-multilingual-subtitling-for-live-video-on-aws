@@ -1,0 +1,13 @@
+/node_modules
+/build
+/dist
+/coverage
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+
+.DS_store
+node_modules
+
+/lib/front-end/video-player/config.json
