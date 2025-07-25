@@ -1,16 +1,4 @@
-/*
- *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
- *  with the License. A copy of the License is located at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
- *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
- *  and limitations under the License.
- */
-
+// MediaLive construct for live streaming
 import {
   aws_medialive as medialive,
   aws_iam as iam,
@@ -57,11 +45,7 @@ export class MediaLive extends Construct {
     var destinationValue = [];
     var inputSettingsValue = {};
 
-    /*
-     * First step: Create MediaLive Policy & Role 👇
-     */
-
-    //👇Generate Policy for MediaLive to access MediaPackage, MediaConnect, S3, MediaStore...
+    // Create MediaLive Policy & Role
     const customPolicyMediaLive = new iam.PolicyDocument({
       statements: [
         new iam.PolicyStatement({
@@ -101,7 +85,6 @@ export class MediaLive extends Construct {
       ],
     });
 
-    //👇Generate a Role for MediaLive to access MediaPackage and S3. You can modify the role to restrict to specific S3 buckets
     const role = new iam.Role(this, "MediaLiveAccessRole", {
       inlinePolicies: {
         policy: customPolicyMediaLive,
@@ -110,10 +93,7 @@ export class MediaLive extends Construct {
     });
     this.roleArn = role.roleArn;
 
-    /*
-     * Second step: Create Security Groups 👇
-     */
-    //👇Generate Security Groups for RTP and RTMP (Push) inputs
+    // Create Security Groups
     const mediaLiveSG = new medialive.CfnInputSecurityGroup(
       this,
       "MediaLiveInputSecurityGroup",
@@ -126,10 +106,7 @@ export class MediaLive extends Construct {
       },
     );
 
-    /*
-     * Third step: Create Input and specific info based on the input types 👇
-     */
-    //👇 1. Create a MediaLive input
+    // Create MediaLive input
     const inputName =
       Aws.STACK_NAME + "_" + configuration["inputType"] + "_MediaLiveInput";
     var cfnInputProps: medialive.CfnInputProps = {
@@ -165,10 +142,9 @@ export class MediaLive extends Construct {
       },
     };
 
-    //👇1.1 Testing the Input Type
+    // Configure input based on type
     switch (configuration["inputType"]) {
       case "INPUT_DEVICE":
-        //👇 Validating if STANDARD or SINGLE_PIPELINE Channel to provide 1 or 2 InputDevice
         if (configuration["channelClass"] == "STANDARD") {
           destinationValue = [
             { id: configuration["priLink"] },
@@ -192,7 +168,6 @@ export class MediaLive extends Construct {
         };
         break;
       case "RTMP_PUSH":
-        //👇 Validating if STANDARD or SINGLE_PIPELINE Channel to provide 1 or 2 URL
         if (configuration["channelClass"] == "STANDARD") {
           destinationValue = [
             { streamName: configuration["streamName"] + "/primary" },
@@ -214,7 +189,6 @@ export class MediaLive extends Construct {
       case "RTMP_PULL":
       case "URL_PULL":
       case "TS_FILE":
-        //👇 Validating if STANDARD or SINGLE_PIPELINE Channel to provide 1 or 2 URL
         if (configuration["channelClass"] == "STANDARD") {
           destinationValue = [
             { url: configuration["priUrl"] },
@@ -233,7 +207,6 @@ export class MediaLive extends Construct {
         };
         break;
       case "MEDIACONNECT":
-        //👇 Validating if STANDARD or SINGLE_PIPELINE Channel to provide 1 or 2 URL
         if (configuration["channelClass"] == "STANDARD") {
           destinationValue = [
             { flowArn: configuration["priFlow"] },
@@ -257,7 +230,7 @@ export class MediaLive extends Construct {
       cfnInputProps,
     );
 
-    //2. Create Channel
+    // Create Channel
     var params = {
       resolution: "",
       maximumBitrate: "",
@@ -286,17 +259,13 @@ export class MediaLive extends Construct {
         );
     }
 
-    // Determine if MediaLive will use a MediaPackage or HLS output group
-    // If hlsIngestEndpoint1 and hlsIngestEndpoint2 are specified a HLS output
-    // group will be configured in the MediaLive channel.
-    // Otherwise a MediaPackage output group will be configured in the MediaLive channel.
+    // Determine output group type
     const outputGroupType =
       hlsIngestEndpoint1 && hlsIngestEndpoint2
         ? "HLS_OUTPUT_GROUP"
         : "MEDIAPACKAGE_OUTPUT_GROUP";
     var mediaLiveDestination = null;
     if (outputGroupType == "HLS_OUTPUT_GROUP") {
-      // HLS Output Group
       mediaLiveDestination = {
         id: "media-destination",
         settings: [
@@ -309,7 +278,6 @@ export class MediaLive extends Construct {
         ],
       };
 
-      // Configure output group settings
       encoderSettings.outputGroups[0].outputGroupSettings = {
         hlsGroupSettings: {
           adMarkers: [],
@@ -350,13 +318,11 @@ export class MediaLive extends Construct {
         },
       };
 
-      // Set output settings for each output in the output group
       for (let i = 0; i < encoderSettings.outputGroups[0].outputs.length; i++) {
         encoderSettings.outputGroups[0].outputs[i].outputSettings =
           commonOutputSettings;
       }
     } else {
-      // MediaPackage Output Group
       mediaLiveDestination = {
         id: "media-destination",
         mediaPackageSettings: [
@@ -400,9 +366,8 @@ export class MediaLive extends Construct {
 
     this.channelLive = channelLive;
     this.channelInput = mediaLiveInput;
-    /*
-     * Final step: Exporting Varibales for Cfn Outputs 👇
-     */
+    
+    // Export outputs
     new CfnOutput(this, "MyMediaLiveChannelArn", {
       value: this.channelLive.attrArn,
       exportName: Aws.STACK_NAME + "mediaLiveChannelArn",

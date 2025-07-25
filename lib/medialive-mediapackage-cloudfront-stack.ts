@@ -1,15 +1,4 @@
-/*
- *  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
- *  with the License. A copy of the License is located at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
- *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
- *  and limitations under the License.
- */
+// MediaLive, MediaPackage, and CloudFront integration stack
 import { Aws, CfnOutput, Fn } from "aws-cdk-lib";
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
@@ -23,23 +12,16 @@ export class MedialiveMediapackageCloudfrontStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    /*
-     * Getting configuration information 👇
-     */
     var configuration = require("../config/configuration.json");
 
-    /*
-     * First step: Create MediaPackage Channel 👇
-     */
+    // Create MediaPackage Channel
     const mediaPackageChannel = new MediaPackageV2(
       this,
       "MyMediaPackageChannel",
       configuration.mediaPackage,
     );
 
-    /*
-     * Second step: Create MediaLive Channel 👇
-     */
+    // Create MediaLive Channel
     const mediaLiveChannel = new MediaLive(
       this,
       "MyMediaLiveChannel",
@@ -49,14 +31,9 @@ export class MedialiveMediapackageCloudfrontStack extends cdk.Stack {
       mediaPackageChannel.myChannelIngestEndpoint2,
     );
 
-    // MediaLive needed to create the an IAM role before it could be included in the
-    // MediaPackage channel policy.
     mediaPackageChannel.attachChannelPolicy(mediaLiveChannel.roleArn);
 
-    /*
-     * Third step: Create CloudFront Distribution 👇
-     */
-    // Extract MediaPackage Hostname from the HLS endpoint
+    // Create CloudFront Distribution
     const mediaPackageHostname = Fn.select(
       2,
       Fn.split("/", mediaPackageChannel.myChannelEndpointHlsUrl),
@@ -69,9 +46,6 @@ export class MedialiveMediapackageCloudfrontStack extends cdk.Stack {
       s3LoggingEnabled,
     );
 
-    /*
-     * Final step: Exporting Varibales for Cfn Outputs
-     */
     // Export MediaPackage Channel Name
     new CfnOutput(this, "MyMediaPackageChannelName", {
       value: mediaPackageChannel.myChannelName,
@@ -129,7 +103,6 @@ export class MedialiveMediapackageCloudfrontStack extends cdk.Stack {
         llCmafPathEMP,
     });
 
-    // Exporting S3 Buckets for CloudFront Logs
     if ( s3LoggingEnabled ) {
       new CfnOutput(this, "MyCloudFrontS3LogBucket", {
         value: cloudfront.s3LogsBucket.bucketName,
@@ -138,13 +111,12 @@ export class MedialiveMediapackageCloudfrontStack extends cdk.Stack {
       });
     }
 
-    //👇Check if AutoStart is enabled in the MediaLive configuration to start MediaLive
+    // Check if AutoStart is enabled in MediaLive configuration
     if (configuration.mediaLive["autoStart"]) {
       const resource = new AutoStartMediaLive(this, "AutoStartResource", {
         mediaLiveChannel: mediaLiveChannel.channelLive.attrArn,
       });
 
-      // Enable adding suppressions to child constructs
       NagSuppressions.addResourceSuppressions(
         resource,
         [
