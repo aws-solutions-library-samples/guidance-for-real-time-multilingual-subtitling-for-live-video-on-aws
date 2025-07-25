@@ -1,0 +1,85 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# CDK
+cdk.out/
+*.js.map
+*.d.ts.map
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Build outputs
+dist/
+build/
+
+# AWS
+.aws/
+
+# Downloads folder (contains personal files)
+Downloads/
+../../Downloads/
+
+# Personal files
+*.pem
+*.rdp
+*.csv
+*.xlsx
+*.xls
+*.pdf
+*.docx
+*.pptx
+*.jpg
+*.jpeg
+*.png
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.zip
+*.dmg
+*.pkg
+*.app/
+
+# Temporary files
+*.tmp
+*.temp
+
+# System files
+Library/
+Movies/
+Music/
+Pictures/
+Public/
+WorkDocsDownloads/
+.Trash/
+
+# Other personal directories
+obsidian/
+cvpn_cert/
+easy-rsa/
+hello/
+genai-video-super-resolution/
+ad-break-detection/
+steampipe-mod-aws-insights/
+videosdk-rtc-javascript-sdk-example/
+medialive_template/

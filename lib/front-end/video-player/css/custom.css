@@ -1,0 +1,522 @@
+.brand-icon {
+    background: url(../img/AWS_Media_Solutions_Rodeo_r02_AWS_logo_59x32_2x.png);
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-position-x: center;
+    height: 32px;
+    width: 59px;
+}
+@font-face {
+    font-family:AmazonEmber;
+    src:url(../fonts/AmazonEmber_W_Rg.woff2) format("woff2"),
+    url(../fonts/AmazonEmber_W_Rg.woff) format("woff");
+    font-weight:400;
+    font-style:normal
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    font-family:'AmazonEmber',Helvetica,Arial,sans-serif !important ;
+    background-color: #38383f;
+}
+.card-sm{
+    height: 500px;
+    overflow: hidden;
+}
+.card-md{
+    height: 540px;
+    overflow: hidden;
+}
+.card-lg{
+    height: 650px;
+    overflow: hidden;
+}
+.bar-sm {
+    height: 500px;
+    height: 5px;
+    padding: 0 0 0 0;
+}
+
+/* INTRO Specific */
+.full-width-header-index {
+    background: 
+    url(../img/AWS_Media_Solutions_Rodeo_r02_header_Index_1490x152_2x.png);
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-position-x: center;
+}
+
+/* LANDING Specific */
+.full-width-header-landing {
+    background: 
+    url(../img/AWS_Media_Solutions_Rodeo_r02_header_landing_1490x408_2x.png);
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-position-x: center;
+}
+
+/* INTRO Specific */
+.full-width-header-intro {
+    background: 
+    url(../img/AWS_Media_Solutions_Rodeo_r02_header_landing_1490x408_2x.png);
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-position-x: center;
+}
+#secondary-menu li .active{
+    border-bottom: 2px solid blueviolet;
+    color: blueviolet;
+}
+/* .card-md 370x200 */
+/* .card    265x200 */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.card-sm .card-img-top{ 
+    height: 130px;
+}
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+}
+.featured-video-image-hack {
+    height: 308px; 
+    object-fit: cover;
+}
+#password-show.btn-outline-secondary {
+  background: #ec7211;
+  background: var(--color-background-button-primary-default-qvzkqw, #ec7211);
+  color: #ffffff;
+  color: var(--color-text-button-primary-default-iy7hsx, #ffffff);
+  border-color: #ec7211;
+  border-color: var(--color-background-button-primary-default-qvzkqw, #ec7211);
+  position: relative;
+  text-decoration: none;
+}
+#password-show.btn-outline-secondary:hover {
+  background: #eb5f07;
+  background: var(--color-background-button-primary-hover-3h3kwa, #eb5f07);
+  color: #ffffff;
+  color: var(--color-text-button-primary-hover-vtm3ow, #ffffff);
+  border-color: #eb5f07;
+  border-color: var(--color-background-button-primary-hover-3h3kwa, #eb5f07);
+  text-decoration: none;
+}
+#password-show.btn-outline-secondary:active {
+  background: #dd6b10;
+  background: var(--color-background-button-primary-active-h11zge, #dd6b10);
+  color: #ffffff;
+  color: var(--color-text-button-primary-active-zvqo2f, #ffffff);
+  border-color: #dd6b10;
+  border-color: var(--color-background-button-primary-active-h11zge, #dd6b10);
+}
+#login-password-span, #login-username-span {
+    content: "";
+    position: absolute;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-files" viewBox="0 0 16 16"><path d="M13 0H6a2 2 0 0 0-2 2 2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2 2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 13V4a2 2 0 0 0-2-2H5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1zM3 4a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/></svg>');
+    background-repeat: no-repeat;
+    color: #fff;
+    background-color: #e9ecef;
+    width: 31px;
+    height: 100%;
+    right: -30px;
+    background-position: center;
+}
+.input-group#copy-username, .input-group#copy-password {
+    margin-right: 30px;
+}
+
+pre {
+    background-color: ghostwhite;
+    border: 1px solid silver;
+    padding: 10px 20px;
+    margin: 20px;
+    }
+ .json-key {
+    color: brown;
+    }
+ .json-value {
+    color: navy;
+    }
+ .json-string {
+    color: olive;
+    }
+.vjs-title-bar .vjs-title-bar-title {
+    font-size: 3em;
+    }
+
+.vjs-marker {
+    position:absolute;
+    background:red;
+    width:15px;
+    height:30px;
+    top:-14px;
+    z-index:30;
+    margin-left:-3px;
+    }
+
+.vjs-marker:hover span {
+    opacity:1;
+    }
+
+.vjs-marker span {
+    position:absolute;
+    bottom:35px;
+    opacity:0.6;
+    margin-left:-40px;
+    z-index:90;
+    background:rgba(0,0,0,.8);
+    padding:8px;
+    font-size:2em;
+    }
+.vjs-playlist-item {
+    max-height: 150px;
+    margin-bottom: 0px;
+}
+.vjss-playlist-thumbnail img {
+    margin-top: -100px;
+}
+.my-buttons {
+    position: absolute;
+    z-index: 999999;
+    margin-left: 20px;
+    font-size:3em;
+    color: white;
+    background: rgba(0,0,0,.7);
+    opacity: 0.5;
+    border: 3px solid rgba(255,255,255,.5);
+    padding-left: 10px;
+}
+.my-buttons:hover {
+    cursor: pointer;
+    opacity: 1;
+}
+#skip-ads-button {
+    margin-top: 80px;
+    width: 250px;
+    visibility: hidden;
+}
+#validate-button {
+    margin-top: 10px;
+    width: 450px;
+    font-size:2em;
+    visibility: hidden;
+}
+#ytp-id-162 {
+    fill: white;
+}
+.click_link {
+    cursor: pointer;
+}
+
+    /* Accurate.Video icon */
+
+  .cls-1 {
+    fill: #576bb5;
+    stroke: #576bb5;
+  }
+
+  .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7 {
+    stroke-miterlimit: 10;
+    stroke-width: .25px;
+  }
+
+  .cls-2 {
+    fill: #6178c1;
+  }
+
+  .cls-2, .cls-3, .cls-4, .cls-5 {
+    stroke: #5565af;
+  }
+
+  .cls-3 {
+    fill: #4261ba;
+  }
+
+  .cls-4 {
+    fill: #5565af;
+  }
+
+  .cls-5 {
+    fill: #4359a8;
+  }
+
+  .cls-6 {
+    fill: #294291;
+  }
+
+  .cls-6, .cls-7 {
+    stroke: #495c91;
+  }
+
+  .cls-7 {
+    fill: #32489b;
+  }    
+/* Subtitle section styling */
+.subtitle-section {
+    margin-top: 20px;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.subtitle-container {
+    font-family: 'AmazonEmber', Helvetica, Arial, sans-serif;
+    min-height: 120px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 1.4em;
+    line-height: 1.5;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subtitle-placeholder {
+    color: #6c757d;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+.subtitle-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    padding: 0 20px;
+    display: none;
+}
+
+/* Active subtitle styling */
+.subtitle-container.active-subtitle {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ec7211;
+}
+
+.subtitle-container.active-subtitle .subtitle-placeholder {
+    display: none;
+}
+
+.subtitle-container.active-subtitle .subtitle-text {
+    display: block;
+    animation: subtitleAppear 0.3s ease-in-out;
+}
+
+/* Language selector styling */
+.language-selector {
+    z-index: 10;
+}
+
+.language-selector select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    font-family: 'AmazonEmber', Helvetica, Arial, sans-serif;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.language-selector select:focus {
+    outline: none;
+    border-color: #ec7211;
+    box-shadow: 0 0 0 0.2rem rgba(236, 114, 17, 0.25);
+}
+
+/* Subtitle animation */
+@keyframes subtitleAppear {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Language-specific subtitle styling */
+.subtitle-container[data-language="ko"] .subtitle-text {
+    font-family: 'AmazonEmber', 'Malgun Gothic', sans-serif;
+}
+
+.subtitle-container[data-language="ja"] .subtitle-text {
+    font-family: 'AmazonEmber', 'Hiragino Kaku Gothic Pro', sans-serif;
+}
+
+.subtitle-container[data-language="zh"] .subtitle-text {
+    font-family: 'AmazonEmber', 'Microsoft YaHei', sans-serif;
+}
+
+/* Subtitle emphasis */
+.subtitle-text em {
+    font-style: normal;
+    color: #ec7211;
+    font-weight: 600;
+}
+
+/* Subtitle speaker identification */
+.subtitle-speaker {
+    font-weight: bold;
+    color: #32489b;
+    margin-right: 5px;
+}
+
+/* Subtitle transition effects */
+.subtitle-fade-in {
+    animation: subtitleFadeIn 0.5s ease forwards;
+}
+
+.subtitle-fade-out {
+    animation: subtitleFadeOut 0.5s ease forwards;
+}
+
+@keyframes subtitleFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes subtitleFadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Control buttons styling */
+.control-buttons {
+    margin-top: 15px;
+}
+
+.control-buttons .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.control-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.control-buttons .btn-primary {
+    background-color: #ec7211;
+    border-color: #ec7211;
+}
+
+.control-buttons .btn-primary:hover {
+    background-color: #eb5f07;
+    border-color: #eb5f07;
+}
+
+.control-buttons .btn-secondary {
+    background-color: #495c91;
+    border-color: #495c91;
+}
+
+.control-buttons .btn-secondary:hover {
+    background-color: #32489b;
+    border-color: #32489b;
+}/* Subtitle toggle button styles */
+#video-start-btn.active {
+    background-color: #32489b;
+    border-color: #32489b;
+    box-shadow: 0 0 0 0.25rem rgba(50, 72, 155, 0.5);
+}
+
+#video-start-btn.active:hover {
+    background-color: #293c82;
+    border-color: #293c82;
+}
+
+/* Enhanced toggle state visual indication */
+#video-start-btn {
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#video-start-btn .bi-cc-circle {
+    transition: all 0.3s ease;
+}
+
+#video-start-btn.active .bi-cc-circle {
+    fill: #4CAF50;
+    transform: scale(1.2);
+}
+
+/* Subtle animation for toggle state change */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+#video-start-btn.active {
+    animation: pulse 0.3s ease-in-out;
+}
+
+/* Subtitle display animation */
+@keyframes subtitleFade {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+#subtitle-display:not(:empty) {
+    animation: subtitleFade 0.3s ease-in-out;
+}/* S
+ubtitle toggle button styles */
+#video-start-btn {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#video-start-btn.active {
+    background-color: #32489b;
+    border-color: #32489b;
+    box-shadow: 0 0 0 0.25rem rgba(50, 72, 155, 0.5);
+}
+
+#video-start-btn.active:hover {
+    background-color: #293c82;
+    border-color: #293c82;
+}
+
+/* Toggle indicator */
+#video-start-btn::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #fff;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#video-start-btn.active::after {
+    opacity: 1;
+    background-color: #4CAF50;
+}
+
+/* Improve button focus state for accessibility */
+#video-start-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(236, 114, 17, 0.5);
+}
+
+#video-start-btn.active:focus {
+    box-shadow: 0 0 0 0.25rem rgba(50, 72, 155, 0.5);
+}

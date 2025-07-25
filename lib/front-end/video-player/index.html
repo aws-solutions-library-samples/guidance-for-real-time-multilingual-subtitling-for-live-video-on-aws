@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Live Subtitling & Voice Cloning</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+        <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/videojs-playlist@5.1.0/dist/videojs-playlist.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/videojs-playlist-ui@5.0.0/dist/videojs-playlist-ui.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/videojs-playlist-ui@4.1.1/dist/videojs-playlist-ui.min.css" rel="stylesheet"/>
+
+        <link href="css/custom.css" rel="stylesheet" media="screen">
+    </head>
+
+    <body>
+
+        <!-- NAVBAR -->
+        <div class="container-fullwidth">
+            <!-- PRIMARY NAVBAR CODE -->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse">
+                <!--ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onClick="javascript:alert('Nav-item#1 clicked');"> Nav-item#1</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onClick="javascript:alert('Nav-item#2 clicked');"> Nav-item#2</a>
+                        </li>
+                    </ul-->
+                </div>
+            </nav>
+        </div>
+
+        <!-- HEADER -->
+        <div class="container-fluid px-0">
+            <div class="row mx-0">
+                <div class="col-12 bg-dark text-light  shadow-sm ">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col" id="header-parent">
+                                <h2 id="header-title">Auto Live Subtitling & Voice Cloning</h2>
+                                <p class="small">Provide realtime subtitling and translation from incoming video and exhibits voice cloning with different languages</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLAYER SECTION -->
+        <div class="container-fluid p-3">
+            <div class="row">
+                    <div class="row">
+                        <div class="col-8">
+                            <span id="skip-ads-button" class="my-buttons"><span>Skip ad</span><svg height="30%" version="1.1" viewBox="0 0 36 36" width="30%"><use xlink:href="#ytp-id-162"></use>
+                                <path d="M 12,24 20.5,18 12,12 V 24 z M 22,12 v 12 h 2 V 12 h -2 z" id="ytp-id-162"></path>
+                            </svg></span>
+                            <video
+                                id="my-video"
+                                class="video-js vjs-big-play-centered vjs-theme-sea"
+                                controls
+                                preload="auto"
+                                fluid="true"
+                                width="640"
+                                data-setup='{"inactivityTimeout": 0, "userActions": { "click": false }}'>
+                            </video>
+                            <table></table> 
+                            <span id="validate-button" class="my-buttons"><svg data-name="Layer 1" viewBox="0 0 272.28 272.32" width="36px" height="36px" xmlns="http://www.w3.org/2000/svg">
+                                <path class="cls-6" d="m59.4 249.73c66.01-22.76 138.71-15.07 198.49 21s-13.67-24.84-41.95-60.39c-72.38 10.96-123.78 26.76-156.54 39.39z"></path>
+                                <path class="cls-5" d="m215.94,210.38c-24.16-30.3-50.86-58.5-79.8-84.28C53.44,199.82,14.39,270.77,14.39,270.77h0s1.59-1,4.79-2.78h0c1.59-.9,3.19-1.79,4.78-2.66l.37-.19c3.12-1.69,6.27-3.31,9.46-4.84l.2-.1c1.47-.71,2.94-1.39,4.41-2.07l1.6-.71c2.53-1.14,5.09-2.23,7.65-3.27l1.63-.66c1.27-.51,2.54-1,3.81-1.47l2.6-1c1.23-.45,2.47-.9,3.71-1.33h0c32.76-12.59,84.16-28.39,156.54-39.31Z"></path>
+                                <path class="cls-3" d="m14.39,270.77s39.05-71,121.75-144.67c-14.89-13.28-31.18-26.64-48.93-39.69L127.75,5.34,1.15,258.54c-.73,1.44-1.08,3.05-1,4.67.02.49.09.99.19,1.47.89,3.88,4.06,6.82,8,7.41.49.07.99.09,1.48.08,1.62-.07,3.19-.55,4.57-1.4Z"></path>
+                                <path class="cls-7" d="m271.84,260.45c-.09-.34-.2-.67-.32-1-.11-.32-.24-.63-.38-.94l-42.2-84.41L144.54,5.34l100.52,201.06c-10.07,1.23-19.78,2.56-29.13,4,28.28,35.55,41.95,60.39,41.95,60.39h0c1.38.85,2.95,1.33,4.57,1.4.5.01,1-.01,1.49-.08,2.42-.35,4.62-1.6,6.15-3.51.3-.38.57-.78.82-1.19,1.24-2.1,1.58-4.61.93-6.96Z"></path>
+                                <path class="cls-4" d="m136.14,126.1c28.94,25.78,55.64,53.98,79.8,84.28,9.33-1.41,19.04-2.74,29.13-4L144.54,5.34l40.52,81.07c-17.73,13.05-34,26.41-48.92,39.69Z"></path>
+                                <path class="cls-2" d="m87.21,86.41c17.75,13,34,26.41,48.93,39.69,14.92-13.28,31.19-26.64,48.92-39.69L144.54,5.34c-.21-.43-.45-.84-.72-1.24-.76-1.09-1.74-2-2.88-2.67-.36-.22-.74-.41-1.13-.57-.78-.32-1.59-.54-2.42-.65-.83-.11-1.66-.11-2.49,0-.83.11-1.64.33-2.42.65-.39.16-.77.35-1.14.57-1.14.68-2.11,1.59-2.87,2.67-.27.39-.51.8-.72,1.22l-40.54,81.09Z"></path>
+                            </svg><span>Validate in Accurate.Video</span></span>
+                            <table></table>
+                            
+                            <!-- Subtitle Display Section -->
+                            <div class="subtitle-section mt-3 p-3 bg-dark text-light rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h4>Live Subtitles</h4>
+                                    <div class="language-selector">
+                                        <select id="language-selector" class="form-select form-select-sm" aria-label="Select subtitle language">
+                                            <option value="ko" selected>한국어 (Korean)</option>
+                                            <option value="en">English</option>
+                                            <option value="es">Español (Spanish)</option>
+                                            <option value="fr">Français (French)</option>
+                                            <option value="de">Deutsch (German)</option>
+                                            <option value="ja">日本語 (Japanese)</option>
+                                            <option value="zh">中文 (Chinese)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="subtitle-display" class="p-3 bg-light text-dark rounded subtitle-container">
+                                    <div class="subtitle-placeholder">Subtitles will appear here...</div>
+                                    <div class="subtitle-text"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Control Buttons -->
+                            <div class="control-buttons mt-3 d-flex justify-content-start">
+                                <button id="video-start-btn" class="btn btn-primary me-2" aria-pressed="false" aria-label="Toggle subtitles">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cc-circle" viewBox="0 0 16 16">
+                                        <path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8Zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0Z"/>
+                                        <path d="M5.408 7.17c-.34 0-.645.094-.906.282-.26.187-.474.434-.641.74-.167.306-.25.659-.25 1.058 0 .398.083.75.249 1.059.167.306.38.554.641.741.262.187.566.28.906.28.195 0 .375-.028.541-.084a1.6 1.6 0 0 0 .457-.242c.141-.116.261-.271.358-.466.097-.195.162-.441.195-.739h-.972c-.025.196-.078.34-.157.433a.433.433 0 0 1-.337.173.4.4 0 0 1-.246-.073.513.513 0 0 1-.17-.214 1.4 1.4 0 0 1-.097-.351c-.02-.145-.03-.292-.03-.442 0-.149.01-.297.03-.443.02-.145.051-.259.097-.351a.513.513 0 0 1 .17-.213.4.4 0 0 1 .246-.074c.146 0 .26.057.337.173.079.093.132.238.157.433h.972c-.033-.298-.098-.544-.195-.74a1.307 1.307 0 0 0-.358-.465 1.6 1.6 0 0 0-.457-.242 1.834 1.834 0 0 0-.541-.084Zm4.013 0c-.34 0-.645.094-.906.282-.261.187-.474.434-.641.74-.167.306-.25.659-.25 1.058 0 .398.083.75.249 1.059.167.306.38.554.641.741.262.187.566.28.906.28.195 0 .375-.028.541-.084a1.6 1.6 0 0 0 .457-.242c.141-.116.261-.271.358-.466.097-.195.162-.441.195-.739h-.972c-.025.196-.078.34-.157.433a.433.433 0 0 1-.337.173.4.4 0 0 1-.246-.073.513.513 0 0 1-.17-.214 1.4 1.4 0 0 1-.097-.351c-.02-.145-.03-.292-.03-.442 0-.149.01-.297.03-.443.02-.145.051-.259.097-.351a.513.513 0 0 1 .17-.213.4.4 0 0 1 .246-.074c.146 0 .26.057.337.173.079.093.132.238.157.433h.972c-.033-.298-.098-.544-.195-.74a1.307 1.307 0 0 0-.358-.465 1.6 1.6 0 0 0-.457-.242 1.834 1.834 0 0 0-.541-.084Z"/>
+                                    </svg>
+                                    <span class="button-text">Subtitles On</span>
+                                </button>
+                                <button id="reset-btn" class="btn btn-secondary">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+                                        <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+                                    </svg>
+                                    Reset
+                                </button>
+                            </div>
+                            
+                            <!-- Reset Log -->
+                            <div id="reset-log" class="mt-2 p-2 bg-light border-start border-primary border-3 rounded" style="display: none;">
+                                <small class="text-primary fw-bold d-flex align-items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-info-circle me-2" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                                    </svg>
+                                </small>
+                            </div>
+
+                        </div>
+                        <div class="col-4">
+                            <div class="vjs-playlist"></div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="container-fullwidth">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand brand-icon" href="#"></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onClick="javascript:window.open('https://videojs.com/');"> powered by Video.js</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+    <script src="app.js"></script>
+    </body>
+
+</html>

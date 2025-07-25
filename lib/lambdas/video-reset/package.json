@@ -1,0 +1,11 @@
+{
+  "name": "video-reset-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function to reset video processing and stop MediaLive channel",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-medialive": "^3.400.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

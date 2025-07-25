@@ -1,0 +1,12 @@
+{
+  "name": "process-video-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function to process video with MediaLive input",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-medialive": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
