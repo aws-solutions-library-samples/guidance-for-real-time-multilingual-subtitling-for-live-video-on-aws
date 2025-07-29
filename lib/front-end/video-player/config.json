@@ -14,15 +14,15 @@
     "HLSEndpointURL": "https://82934cf9c8696bd2.mediapackage.us-east-1.amazonaws.com/out/v1/e487dc2d9605417ea1e09b6f43b5cc33/index.m3u8",
     "MediaLiveChannelId": "994399"
   },
+  "SubtitleOriginStack": {
+    "subtitleoriginurl": "https://gr8qmhw3s3.execute-api.us-east-1.amazonaws.com/prod/",
+    "subtitleoriginEndpointF85265B6": "https://gr8qmhw3s3.execute-api.us-east-1.amazonaws.com/prod/"
+  },
   "UDPAudioReceiverStack": {
     "ApiGatewayUrl": "https://cne90wyixi.execute-api.us-east-1.amazonaws.com/prod/",
     "VideoProcessingApiEndpoint9EFE1B95": "https://cne90wyixi.execute-api.us-east-1.amazonaws.com/prod/",
     "SubtitleTableName": "SubtitleTable",
     "LoadBalancerDNS": "UDPAud-UdpRe-D6VQncFR2MCv-c9a5d020f8b8e084.elb.us-east-1.amazonaws.com"
-  },
-  "SubtitleOriginStack": {
-    "subtitleoriginurl": "https://gr8qmhw3s3.execute-api.us-east-1.amazonaws.com/prod/",
-    "subtitleoriginEndpointF85265B6": "https://gr8qmhw3s3.execute-api.us-east-1.amazonaws.com/prod/"
   },
   "CognitoStack": {
     "loginurl": "https://auto-live-subtitling.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=37ilot98862ba0cvnjb9m80mq3&response_type=token&scope=openid&redirect_uri="
