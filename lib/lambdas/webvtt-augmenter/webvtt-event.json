@@ -1,0 +1,104 @@
+{
+    "Records": [
+        {
+            "cf": {
+                "config": {
+                    "distributionDomainName": "df4rbw17963h7.cloudfront.net",
+                    "distributionId": "E3UNKE1XUJYFWC",
+                    "eventType": "origin-request",
+                    "requestId": "EttbZaxjaUNTr_Z-n71RWkbuSDz9CP7rBiXXIWfOE0CQQJvGacCaIg=="
+                },
+                "request": {
+                    "body": {
+                        "action": "read-only",
+                        "data": "V0VCVlRUClgtVElNRVNUQU1QLU1BUD1MT0NBTDowMDowMDowMC4wMDAsTVBFR1RTOjIwNzAwMAoK",
+                        "encoding": "base64",
+                        "inputTruncated": false
+                    },
+                    "clientIp": "13.201.209.223",
+                    "headers": {
+                        "host": [
+                            {
+                                "key": "Host",
+                                "value": "b4fccfcab3a283c8.mediapackage.ap-south-1.amazonaws.com"
+                            }
+                        ],
+                        "authorization": [
+                            {
+                                "key": "Authorization",
+                                "value": "Digest username=\"7dab4a372a1042059c6f48c5a0cfc8f8\", realm=\"WebDAV\", nonce=\"Rsz6kpsSBgA=2bfc47936eb313bd62af278ccb8d8d0586f1d832\", uri=\"/in/v2/cf0579056141421ca6d2ef0dec7fc31d/cf0579056141421ca6d2ef0dec7fc31d/channel_es_11165.vtt\", cnonce=\"ZTRhMmY2NWVmMDUwYjkyZDNiNDEyNmJjNjVmZDhmMWE=\", nc=0000007e, qop=auth, response=\"8e642beb47d90ba972c3ff8caa4774fd\", algorithm=\"MD5\""
+                            }
+                        ],
+                        "x-forwarded-for": [
+                            {
+                                "key": "X-Forwarded-For",
+                                "value": "13.201.209.223"
+                            }
+                        ],
+                        "user-agent": [
+                            {
+                                "key": "User-Agent",
+                                "value": "Amazon CloudFront"
+                            }
+                        ],
+                        "via": [
+                            {
+                                "key": "Via",
+                                "value": "1.1 d25b9a04cf8df2f6cdd66c3b4aae7da2.cloudfront.net (CloudFront)"
+                            }
+                        ],
+                        "content-length": [
+                            {
+                                "key": "Content-Length",
+                                "value": "57"
+                            }
+                        ],
+                        "cache-control": [
+                            {
+                                "key": "Cache-Control",
+                                "value": "max-age=21600"
+                            }
+                        ]
+                    },
+                    "method": "PUT",
+                    "origin": {
+                        "custom": {
+                            "customHeaders": {
+                                "dynamo_index": [
+                                    {
+                                        "key": "DYNAMO_INDEX",
+                                        "value": "id_lang-sort_starttime-index"
+                                    }
+                                ],
+                                "dynamo_table": [
+                                    {
+                                        "key": "DYNAMO_TABLE",
+                                        "value": "LiveSubtitle-edge-VTT-CaptionsDynamoTable-1JWJ5D6E3OPI1"
+                                    }
+                                ],
+                                "pipe_id": [
+                                    {
+                                        "key": "PIPE_ID",
+                                        "value": "pipe0"
+                                    }
+                                ]
+                            },
+                            "domainName": "b4fccfcab3a283c8.mediapackage.ap-south-1.amazonaws.com",
+                            "keepaliveTimeout": 5,
+                            "path": "",
+                            "port": 443,
+                            "protocol": "https",
+                            "readTimeout": 30,
+                            "sslProtocols": [
+                                "TLSv1.1",
+                                "TLSv1.2"
+                            ]
+                        }
+                    },
+                    "querystring": "",
+                    "uri": "/in/v2/cf0579056141421ca6d2ef0dec7fc31d/cf0579056141421ca6d2ef0dec7fc31d/channel_en_11165.vtt"
+                }
+            }
+        }
+    ]
+}

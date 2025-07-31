@@ -18,10 +18,15 @@ const base_live_streaming = new BaseLiveStreamingStack(app, 'BaseLiveStreamingSt
 const udp_audio_receiver = new UDPAudioReceiverStack(app, 'UDPAudioReceiverStack', {
   hlsStreamUrl: base_live_streaming.hlsStreamUrl
 });
-const subtitle_origin = new SubtitleOriginStack(app, 'SubtitleOriginStack', {base_live_streaming: BaseLiveStreamingStack});
+const subtitle_origin = new SubtitleOriginStack(app, 'SubtitleOriginStack', {
+  mediaPackageEndpoint: base_live_streaming.mediaPackageEndpoint,
+  pipeId: 'live-streaming-pipe',
+  transcriptTable: udp_audio_receiver.subtitleTable
+});
 const deploy = new DeployStack(app, 'DeployStack', {
   video_player: video_player,
   apiGatewayUrl: udp_audio_receiver.apiGatewayUrl, // API Gateway URL
   cognitoLoginUrl: cognito.loginUrl, // Cognito Login URL
-  hlsUrl: base_live_streaming.hlsStreamUrl 
+  hlsUrl: base_live_streaming.hlsStreamUrl,
+  udpAudioReceiverStack: udp_audio_receiver // Add dependency
 });
