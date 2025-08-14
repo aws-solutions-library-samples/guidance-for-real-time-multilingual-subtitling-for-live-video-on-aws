@@ -1,4 +1,6 @@
-# Auto Live Subtitling - Real-time Video Subtitle Generation
+// BY Taehoon Kyeong 08.11
+
+## Auto Live Subtitling - Real-time Video Subtitle Generation
 
 This project provides an automated live subtitling solution that generates real-time subtitles for video streams using AWS services. The system processes live video streams, extracts audio, performs speech-to-text transcription, and delivers synchronized subtitles to viewers.
 
@@ -78,20 +80,7 @@ The solution is built using AWS CDK and consists of multiple interconnected stac
 - Email-based user authentication
 - Integration with video player frontend
 
-### 5. SubtitleOriginStack
-**Purpose**: Subtitle processing and delivery API
-
-**Resources Created**:
-- **Lambda Function**: Subtitle builder for WebVTT processing
-- **API Gateway**: RESTful subtitle delivery endpoint
-- **IAM Role**: Lambda execution permissions
-
-**Key Features**:
-- WebVTT subtitle format processing
-- RESTful subtitle retrieval API
-- CORS-enabled for web integration
-
-### 6. DeployStack
+### 5. DeployStack
 **Purpose**: Frontend deployment and configuration management
 
 **Resources Created**:
@@ -135,4 +124,20 @@ cdk deploy --all
 - **CloudFront ↔ MediaPackage**: Global video distribution
 
 
+## How to Start
+ 1. 'npm run deploy-all'   --> cdk deploy --all && node scripts/update-config.js"
+ 2. (Manual)After deploy, go to 'Elemental MediaLive', then choose a channel and click 'edit channel' from dropdown list.
+ 3. (Manual)Create Parameter with MediaPackage username and password
+ 4. (Manual)Start 'MediaLive' and 'MediaConnect'
+ 5. (Manual)Run below command for live stream
+ 'ffmpeg -re -stream_loop -1 -i {path}.mp4 -vcodec libx264 -b:v 2000k -r 30 -vf scale=1920:1080 -acodec aac -strict -2 -ac 2 -ab 128k -ar 44100 -f rtp_mpegts -fec prompeg=l=5:d=20 rtp://52.6.66.152:5000'
+ 6. Click 'Startstream button' in frontend UI.
 
+ ## Clean Resources
+ 1. Stop MediaConnect and MediaLive
+ 2. Delete Lambda Edge 
+ 3. CDK deploy --all
+
+  ## Issues
+  1. Can't associate MediaPackage username and password
+  2. Needs to kill ffmpeg process to run EC2

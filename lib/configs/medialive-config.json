@@ -1,0 +1,312 @@
+{
+  "ChannelClass": "SINGLE_PIPELINE",
+  "Name": "HTTP live streaming",
+  "EncoderSettings": {
+    "AudioDescriptions": [
+      {
+        "Name": "audio_1",
+        "AudioSelectorName": "Default",
+        "CodecSettings": {
+          "AacSettings": {
+            "Bitrate": 192000,
+            "CodingMode": "CODING_MODE_2_0",
+            "SampleRate": 48000
+          }
+        }
+      }
+    ],
+    "AvailConfiguration": {
+      "AvailSettings": {
+        "Scte35SpliceInsert": {
+          "NoRegionalBlackoutFlag": "FOLLOW",
+          "WebDeliveryAllowedFlag": "FOLLOW"
+        }
+      }
+    },
+    "CaptionDescriptions": [
+      {
+        "Name": "caption_english",
+        "CaptionSelectorName": "empty",
+        "DestinationSettings": {
+          "WebvttDestinationSettings": {
+            "StyleControl": "NO_STYLE_DATA"
+          }
+        },
+        "LanguageCode": "en",
+        "LanguageDescription": "English"
+      },
+      {
+        "Name": "caption_korean",
+        "CaptionSelectorName": "empty",
+        "DestinationSettings": {
+          "WebvttDestinationSettings": {
+            "StyleControl": "NO_STYLE_DATA"
+          }
+        },
+        "LanguageCode": "ko",
+        "LanguageDescription": "Korean"
+      },
+      {
+        "Name": "caption_german",
+        "CaptionSelectorName": "empty",
+        "DestinationSettings": {
+          "WebvttDestinationSettings": {
+            "StyleControl": "NO_STYLE_DATA"
+          }
+        },
+        "LanguageCode": "de",
+        "LanguageDescription": "German"
+      },
+      {
+        "Name": "caption_hindi",
+        "CaptionSelectorName": "empty",
+        "DestinationSettings": {
+          "WebvttDestinationSettings": {
+            "StyleControl": "NO_STYLE_DATA"
+          }
+        },
+        "LanguageCode": "hi",
+        "LanguageDescription": "Hindi"
+      },
+      {
+        "Name": "caption_spanish",
+        "CaptionSelectorName": "empty",
+        "DestinationSettings": {
+          "WebvttDestinationSettings": {
+            "StyleControl": "NO_STYLE_DATA"
+          }
+        },
+        "LanguageCode": "es",
+        "LanguageDescription": "Spanish"
+      }
+    ],
+    "GlobalConfiguration": {
+      "InputEndAction": "NONE",
+      "OutputLockingMode": "PIPELINE_LOCKING",
+      "OutputTimingSource": "INPUT_CLOCK",
+      "SupportLowFramerateInputs": "DISABLED"
+    },
+    "OutputGroups": [
+      {
+        "Name": "HLS",
+        "OutputGroupSettings": {
+          "HlsGroupSettings": {
+            "SegmentLength": 2,
+            "AdMarkers": ["ELEMENTAL_SCTE35"],
+            "CaptionLanguageMappings": [],
+            "CaptionLanguageSetting": "OMIT",
+            "ClientCache": "ENABLED",
+            "CodecSpecification": "RFC_4281",
+            "DirectoryStructure": "SINGLE_DIRECTORY",
+            "DiscontinuityTags": "INSERT",
+            "HlsCdnSettings": {
+              "HlsBasicPutSettings": {
+                "ConnectionRetryInterval": 1,
+                "FilecacheDuration": 300,
+                "NumRetries": 10,
+                "RestartDelay": 15
+              }
+            },
+            "HlsId3SegmentTagging": "DISABLED",
+            "IFrameOnlyPlaylists": "DISABLED",
+            "IncompleteSegmentBehavior": "AUTO",
+            "IndexNSegments": 10,
+            "InputLossAction": "EMIT_OUTPUT",
+            "IvInManifest": "INCLUDE",
+            "IvSource": "FOLLOWS_SEGMENT_NUMBER",
+            "KeepSegments": 21,
+            "ManifestCompression": "NONE",
+            "ManifestDurationFormat": "INTEGER",
+            "Mode": "LIVE",
+            "OutputSelection": "MANIFESTS_AND_SEGMENTS",
+            "ProgramDateTime": "EXCLUDE",
+            "ProgramDateTimeClock": "INITIALIZE_FROM_OUTPUT_TIMECODE",
+            "ProgramDateTimePeriod": 600,
+            "RedundantManifest": "DISABLED",
+            "SegmentationMode": "USE_SEGMENT_DURATION",
+            "SegmentsPerSubdirectory": 10000,
+            "StreamInfResolution": "INCLUDE",
+            "TimedMetadataId3Frame": "PRIV",
+            "TimedMetadataId3Period": 10,
+            "TsFileMode": "SEGMENTED_FILES"
+          }
+        },
+        "Outputs": [
+          {
+            "AudioDescriptionNames": ["audio_1"],
+            "VideoDescriptionName": "video_1080p",
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_1080p"
+              }
+            }
+          },
+          {
+            "AudioDescriptionNames": ["audio_1"],
+            "VideoDescriptionName": "video_720p",
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_720p"
+              }
+            }
+          },
+          {
+            "AudioDescriptionNames": ["audio_1"],
+            "VideoDescriptionName": "video_540p",
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_540p"
+              }
+            }
+          },
+          {
+            "OutputName": "english",
+            "CaptionDescriptionNames": ["caption_english"],
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_en"
+              }
+            }
+          },
+          {
+            "OutputName": "korean",
+            "CaptionDescriptionNames": ["caption_korean"],
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_ko"
+              }
+            }
+          },
+          {
+            "OutputName": "german",
+            "CaptionDescriptionNames": ["caption_german"],
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_de"
+              }
+            }
+          },
+          {
+            "OutputName": "hindi",
+            "CaptionDescriptionNames": ["caption_hindi"],
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_hi"
+              }
+            }
+          },
+          {
+            "OutputName": "spanish",
+            "CaptionDescriptionNames": ["caption_spanish"],
+            "OutputSettings": {
+              "HlsOutputSettings": {
+                "HlsSettings": {
+                  "StandardHlsSettings": {
+                    "M3u8Settings": {}
+                  }
+                },
+                "NameModifier": "_es"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "TimecodeConfig": {
+      "Source": "SYSTEMCLOCK"
+    },
+    "VideoDescriptions": [
+      {
+        "Name": "video_1080p",
+        "Height": 1080,
+        "Width": 1920,
+        "CodecSettings": {
+          "H264Settings": {
+            "Bitrate": 2000000,
+            "FramerateControl": "SPECIFIED",
+            "FramerateNumerator": 30,
+            "FramerateDenominator": 1
+          }
+        }
+      },
+      {
+        "Name": "video_720p",
+        "Height": 720,
+        "Width": 1280,
+        "CodecSettings": {
+          "H264Settings": {
+            "Bitrate": 1500000,
+            "FramerateControl": "SPECIFIED",
+            "FramerateNumerator": 30,
+            "FramerateDenominator": 1
+          }
+        }
+      },
+      {
+        "Name": "video_540p",
+        "Height": 540,
+        "Width": 960,
+        "CodecSettings": {
+          "H264Settings": {
+            "Bitrate": 1000000,
+            "FramerateControl": "SPECIFIED",
+            "FramerateNumerator": 30,
+            "FramerateDenominator": 1
+          }
+        }
+      }
+    ]
+  },
+  "InputAttachments": [
+    {
+      "InputAttachmentName": "mediaconnect-input",
+      "InputSettings": {
+        "CaptionSelectors": [
+          {
+            "Name": "empty"
+          }
+        ]
+      }
+    }
+  ],
+  "InputSpecification": {
+    "Codec": "AVC",
+    "MaximumBitrate": "MAX_20_MBPS",
+    "Resolution": "HD"
+  }
+}
