@@ -80,7 +80,27 @@ The solution is built using AWS CDK and consists of multiple interconnected stac
 - Email-based user authentication
 - Integration with video player frontend
 
-### 5. DeployStack
+### 5. MediaLiveStack
+**Purpose**: Live video encoding and multi-language subtitle generation
+
+**Resources Created**:
+- **MediaLive Channel**: Live video encoding with H.264 codec
+- **MediaLive Input**: MP4 file input for video processing
+- **IAM Role**: MediaLive service permissions for MediaPackage and MediaConnect access
+- **Multi-Language Caption Outputs**: WebVTT subtitle generation for 5 languages
+- **Video Output**: Single 1080p H.264 encoded stream
+- **SSM Parameter Integration**: Secure credential management for MediaPackage authentication
+
+**Key Features**:
+- Single pipeline MediaLive channel configuration
+- Multi-language subtitle support (English, Korean, Spanish, German, Hindi)
+- WebVTT format subtitle generation with proper language codes
+- Automatic MediaPackage integration with secure authentication
+- Timecode embedding for precise subtitle synchronization
+- HLS output with 2-second segment duration
+
+
+### 6. DeployStack
 **Purpose**: Frontend deployment and configuration management
 
 **Resources Created**:
@@ -108,7 +128,7 @@ The solution is built using AWS CDK and consists of multiple interconnected stac
 The system deploys as interconnected CDK stacks with proper dependency management:
 
 ```bash
-cdk deploy --all
+npm run deploy-all
 ```
 
 **Stack Dependencies**:
@@ -118,8 +138,8 @@ cdk deploy --all
 
 - **MediaLive ↔ MediaPackage**: Live video encoding and packaging
 - **MediaLive ↔ Fargate**: Audio stream extraction via UDP
-- **Fargate ↔ Transcribe**: Real-time speech-to-text processing
-- **Fargate ↔ DynamoDB**: Subtitle storage and retrieval
+- **EC2 ↔ Transcribe**: Real-time speech-to-text processing
+- **EC2 ↔ DynamoDB**: Subtitle storage and retrieval
 - **Frontend ↔ API Gateway**: Real-time subtitle polling
 - **CloudFront ↔ MediaPackage**: Global video distribution
 
@@ -143,8 +163,8 @@ If you have changed stack and try to redeploy a single stack, please make sure y
 
   ## To-Do lists
   1. (Done) Solve current script issue, add other languages
-  2. Script to match vtt no. for each language with Lambda Edge environment variable
+  2. (Done) Script to match vtt no. for each language with Lambda Edge environment variable
   3. (In-progress) Solve Port Crash(Address already in use) issue
   4. (Done) Cognito 
-  5. EC2 --> Fargate
-  6. Translate Improvement
+  5. EC2 --> Fargate (After no3 is completed)
+  6. (In-progress) Translate Improvement 
