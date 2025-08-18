@@ -133,11 +133,18 @@ cdk deploy --all
  'ffmpeg -re -stream_loop -1 -i {path}.mp4 -vcodec libx264 -b:v 2000k -r 30 -vf scale=1920:1080 -acodec aac -strict -2 -ac 2 -ab 128k -ar 44100 -f rtp_mpegts -fec prompeg=l=5:d=20 rtp://52.6.66.152:5000'
  6. Click 'Startstream button' in frontend UI.
 
+## Instructions
+If you have changed stack and try to redeploy a single stack, please make sure you run 'update-config.js' as well.
+
  ## Clean Resources
  1. Stop MediaConnect and MediaLive
  2. Delete Lambda Edge 
  3. CDK deploy --all
 
-  ## Issues
-  1. Can't associate MediaPackage username and password
-  2. Needs to kill ffmpeg process to run EC2
+  ## To-Do lists
+  1. (Done) Solve current script issue, add other languages
+  2. Script to match vtt no. for each language with Lambda Edge environment variable
+  3. (In-progress) Solve Port Crash(Address already in use) issue
+  4. (Done) Cognito 
+  5. EC2 --> Fargate
+  6. Translate Improvement

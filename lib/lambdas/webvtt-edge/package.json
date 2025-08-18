@@ -2,7 +2,7 @@
   "name": "webvtt-edge-lambda",
   "version": "1.0.0",
   "description": "Lambda@Edge function for WebVTT subtitle integration",
-  "main": "index.js",
+  "main": "index.mjs",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.x.x",
     "@aws-sdk/lib-dynamodb": "^3.x.x"
