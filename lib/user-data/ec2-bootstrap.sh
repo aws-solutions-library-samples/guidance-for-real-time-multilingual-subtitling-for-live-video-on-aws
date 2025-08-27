@@ -33,17 +33,13 @@ mkdir -p /opt/subtitle-processor
 cd /opt/subtitle-processor
 
 npm init -y
-npm install @aws-sdk/client-transcribe-streaming @aws-sdk/client-translate @aws-sdk/util-utf8-node aws-sdk
+npm install @aws-sdk/client-transcribe-streaming @aws-sdk/client-translate @aws-sdk/client-bedrock-runtime @aws-sdk/util-utf8-node aws-sdk
 
 # Start FFmpeg converter in background (5000 → 7950)
-nohup ffmpeg -i rtp://127.0.0.1:5000 -map 0:a -acodec libmp3lame -b:a 32k -ar 16000 -f mp3 udp://127.0.0.1:7950?localport=7949 > /var/log/ffmpeg-converter.log 2>&1 &
+# nohup ffmpeg -i rtp://127.0.0.1:5000 -map 0:a -acodec libmp3lame -b:a 32k -ar 16000 -f mp3 udp://127.0.0.1:7950?localport=7949 > /var/log/ffmpeg-converter.log 2>&1 &
 
-dnf install -y git
-
-# Clone repository and copy the script
-git clone https://github.com/Taehooon6476/live-subtitle.git temp-repo
-cp temp-repo/IBC2025_Subtitle_v1.js subtitle-processor.js
-rm -rf temp-repo
+# CDK Asset will download the script file automatically
+echo "Waiting for CDK Asset to download subtitle-processor.js..." >> /var/log/userdata.log
 
 cat > /etc/systemd/system/subtitle-processor.service << 'SERVICE_EOF'
 [Unit]
@@ -59,12 +55,14 @@ Restart=always
 RestartSec=5
 Environment=NODE_ENV=production
 Environment=REGION=us-east-1
-Environment=TABLE_NAME=SubtitleTable
+Environment=DYNAMODB_TABLE=SubtitleTable
 Environment=ID_PIPE=pipe0
 Environment=LANGUAGE_CODE=en-US
 Environment=ENABLE_TRANSLATION=true
 Environment=SOURCE_LANGUAGE=en
 Environment=CAPTION_LANGUAGES=en,hi,es,ko,de
+Environment=VOCABULARY_NAME=custom-vocabulary
+
 
 [Install]
 WantedBy=multi-user.target
@@ -72,15 +70,10 @@ SERVICE_EOF
 
 # Set proper permissions
 chown -R ec2-user:ec2-user /opt/subtitle-processor
-chmod +x /opt/subtitle-processor/subtitle-processor.js
 
 # Reload systemd and enable service
-systemctl daemon-reload
-systemctl enable subtitle-processor
-systemctl start subtitle-processor
+#systemctl daemon-reload
+#systemctl enable subtitle-processor
 
-echo "=== Service Status ===" >> /var/log/userdata.log
-systemctl status subtitle-processor >> /var/log/userdata.log 2>&1
-
-echo "UserData script completed successfully" >> /var/log/userdata.log
+echo "Bootstrap completed - CDK Asset will download script and start service" >> /var/log/userdata.log
 

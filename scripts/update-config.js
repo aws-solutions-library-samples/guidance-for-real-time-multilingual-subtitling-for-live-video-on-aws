@@ -2,7 +2,7 @@
 
 const { execSync } = require('child_process');
 
-console.log('🚀 Starting deployment configuration update...');
+console.log('Starting deployment configuration update...');
 
 // S3 config update
 console.log('📁 Updating S3 config...');
@@ -23,10 +23,6 @@ const ingestDomain = new URL(primaryIngest.Url).hostname;
 const ingestUsername = primaryIngest.Username;
 const ingestPassword = primaryIngest.Password;
 
-console.log(`📡 HLS Ingest Info:`);
-console.log(`   Domain: ${ingestDomain}`);
-console.log(`   Username: ${ingestUsername}`);
-console.log(`   Password: ${ingestPassword.substring(0, 8)}...`);
 
 // 1. CloudFront Origin update
 console.log('🔄 Updating WebVTT CloudFront origin...');
@@ -52,7 +48,7 @@ console.log('💾 Storing password in SSM Parameter Store...');
 
 execSync(`aws ssm put-parameter --name "/medialive/live-streaming-pw" --value "${ingestPassword}" --type "SecureString" --overwrite --region us-east-1`);
 
-console.log('✅ Password stored in SSM Parameter Store as "live-streaming-password"');
+console.log('✅ Password stored in SSM Parameter Store as "live-streaming-pw"');
 
 // 3. MediaLive Channel 
 console.log('🔄 Updating MediaLive Channel credentials...');
@@ -80,10 +76,7 @@ try {
       'aws cloudformation describe-stacks --stack-name BaseLiveStreamingStack --query "Stacks[0].Outputs[?OutputKey==\'WebVTTCFDomainName\'].OutputValue" --output text --region us-east-1',
       { encoding: 'utf8' }
     ).trim();
-    
-    console.log(`🔍 Debug - Playback CloudFront Domain: ${playbackCloudFrontDomain}`);
-    console.log(`🔍 Debug - Ingest Endpoint ID: ${ingestEndpointId}`);
-    
+        
     const newUrl = `https://${playbackCloudFrontDomain}/in/v2/${ingestEndpointId}/${ingestEndpointId}/channel`;
     console.log(`🔍 Debug - New URL: ${newUrl}`);
     
@@ -116,7 +109,35 @@ try {
   console.log('⚠️  Failed to update MediaLive Channel:', error.message);
 }
 
-// 4. MediaConnect Flow Start
+// 4. Amazon Transcribe Custom Voc
+console.log('📚 Creating Custom Vocabulary...');
+try {
+  const fs = require('fs');
+  const vocabularyPath = 'lib/custom_vocabulary.csv'; //Switch to different csv file name
+  
+  if (fs.existsSync(vocabularyPath)) {
+
+    execSync(`aws s3 cp ${vocabularyPath} s3://${bucketName}/custom_vocabulary.csv --region us-east-1`);
+    console.log('✅ Vocabulary file uploaded to S3');
+    
+    const vocabularyUri = `s3://${bucketName}/custom_vocabulary.csv`;
+    
+    try {
+      execSync(`aws transcribe get-vocabulary --vocabulary-name "custom-vocabulary" --region us-east-1`, { stdio: 'ignore' });
+      execSync(`aws transcribe update-vocabulary --vocabulary-name "custom-vocabulary" --language-code "en-US" --vocabulary-file-uri "${vocabularyUri}" --region us-east-1`, { stdio: 'ignore' });
+      console.log('✅ Custom Vocabulary updated with DisplayAs');
+    } catch (describeError) {
+      execSync(`aws transcribe create-vocabulary --vocabulary-name "custom-vocabulary" --language-code "en-US" --vocabulary-file-uri "${vocabularyUri}" --region us-east-1`, { stdio: 'ignore' });
+      console.log('✅ Custom Vocabulary created with DisplayAs');
+    }
+  } else {
+    console.log('⚠️ custom_vocabulary.csv file not found');
+  }
+} catch (error) {
+  console.log('⚠️ Custom Vocabulary failed:', error.message);
+}
+
+// 5. MediaConnect Flow Start
 console.log('🔄 Starting MediaConnect Flow...');
 
 try {
@@ -127,7 +148,7 @@ try {
   console.log('⚠️  MediaConnect Flow already running or failed to start');
 }
 
-/* // 5. MediaLive Channel Start
+// 6. MediaLive Channel Start
 console.log('🔄 Starting MediaLive Channel...');
 
 try {
@@ -140,10 +161,8 @@ try {
   console.log('✅ MediaLive Channel started');
 } catch (error) {
   console.log('⚠️  MediaLive Channel already running or failed to start');
-} */
+}
 
-console.log('🎉 All updates completed successfully!');
-console.log('');
 console.log('📋 Summary:');
 console.log(`   ✅ S3 Config updated`);
 console.log(`   ✅ CloudFront Origin: ${ingestDomain}`);
