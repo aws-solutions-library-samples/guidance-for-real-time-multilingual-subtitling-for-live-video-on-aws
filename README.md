@@ -146,12 +146,13 @@ npm run deploy-all
 
 ## How to Start
  1. 'npm run deploy-all'   --> cdk deploy --all && node scripts/update-config.js"
- 2. (Manual)After deploy, go to 'Elemental MediaLive', then choose a channel and click 'edit channel' from dropdown list.
- 3. (Manual)Create Parameter with MediaPackage username and password
- 4. (Manual)Start 'MediaLive' and 'MediaConnect'
- 5. (Manual)Run below command for live stream
- 'ffmpeg -re -stream_loop -1 -i {path}.mp4 -vcodec libx264 -b:v 2000k -r 30 -vf scale=1920:1080 -acodec aac -strict -2 -ac 2 -ab 128k -ar 44100 -f rtp_mpegts -fec prompeg=l=5:d=20 rtp://52.6.66.152:5000'
- 6. Click 'Startstream button' in frontend UI.
+
+2.
+ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
+  -vcodec libx264 -b:v 2000k -r 25 -vf scale=1920:1080 \
+  -acodec aac -strict -2 -ac 2 -ab 128k -ar 48000 \
+  -f mpegts \
+  "srt://52.200.153.138:3088?mode=caller"
 
 ## Instructions
 If you have changed stack and try to redeploy a single stack, please make sure you run 'update-config.js' as well.
@@ -160,11 +161,3 @@ If you have changed stack and try to redeploy a single stack, please make sure y
  1. Stop MediaConnect and MediaLive
  2. Delete Lambda Edge 
  3. CDK deploy --all
-
-  ## To-Do lists
-  1. (Done) Solve current script issue, add other languages
-  2. (Done) Script to match vtt no. for each language with Lambda Edge environment variable
-  3. (In-progress) Solve Port Crash(Address already in use) issue
-  4. (Done) Cognito 
-  5. EC2 --> Fargate (After no3 is completed)
-  6. (In-progress) Translate Improvement 
