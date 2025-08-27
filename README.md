@@ -107,11 +107,6 @@ The solution is built using AWS CDK and consists of multiple interconnected stac
 - **S3 Bucket Deployment**: Automated frontend asset deployment
 - **Configuration Management**: Dynamic config.json generation
 
-**Key Features**:
-- Automated frontend deployment to S3
-- Dynamic configuration injection
-- CloudFront cache invalidation
-
 ## System Workflow
 
 1. **Video Input**: Live video stream enters through MediaLive input
@@ -131,8 +126,6 @@ The system deploys as interconnected CDK stacks with proper dependency managemen
 npm run deploy-all
 ```
 
-**Stack Dependencies**:
-- VideoPlayerStack → CognitoStack → BaseLiveStreamingStack → UDPAudioReceiverStack → SubtitleOriginStack → DeployStack
 
 ## Key Integrations
 
