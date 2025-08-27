@@ -152,12 +152,11 @@ ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
   -vcodec libx264 -b:v 2000k -r 25 -vf scale=1920:1080 \
   -acodec aac -strict -2 -ac 2 -ab 128k -ar 48000 \
   -f mpegts \
-  "srt://52.200.153.138:3088?mode=caller"
+  "srt://yourMediaConnectIP:3088?mode=caller"
 
 ## Instructions
 If you have changed stack and try to redeploy a single stack, please make sure you run 'update-config.js' as well.
 
  ## Clean Resources
  1. Stop MediaConnect and MediaLive
- 2. Delete Lambda Edge 
- 3. CDK deploy --all
+ 2. CDK destroy --all (Will meet some issues due to Lambda@ and unstopped resources, delete manually)
