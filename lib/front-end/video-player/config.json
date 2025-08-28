@@ -1,1 +1,21 @@
-{}
+{
+  "VideoPlayerStack": {
+    "ExportsOutputRefCDNvideoplayer51E3DCFB865566F2": "E24MUGJ94I865G",
+    "VideoPlayerBucket": "videoplayerstack-videoplayerbucketb7018845-zfmgjwiqmpfv",
+    "ExportsOutputFnGetAttvideoplayerbucketB7018845Arn560640BD": "arn:aws:s3:::videoplayerstack-videoplayerbucketb7018845-zfmgjwiqmpfv",
+    "CDNvideoplayerurl": "https://d2uu1l0n2m1r6g.cloudfront.net/",
+    "ExportsOutputFnGetAttCDNvideoplayer51E3DCFBDomainName4A1E4930": "d2uu1l0n2m1r6g.cloudfront.net",
+    "ExportsOutputRefvideoplayerbucketB70188454D54F8C6": "videoplayerstack-videoplayerbucketb7018845-zfmgjwiqmpfv"
+  },
+  "CognitoStack": {
+    "loginurl": "https://auto-live-subtitling-087967639890.auth.ap-south-1.amazoncognito.com/oauth2/authorize?client_id=7094qdsl1srt80evj2rp74t5q&response_type=token&scope=openid&redirect_uri=https://d2uu1l0n2m1r6g.cloudfront.net/"
+  },
+  "UDPAudioReceiverStack": {
+    "ApiGatewayUrl": "https://s0qkwpfc4b.execute-api.ap-south-1.amazonaws.com/prod/",
+    "ExportsOutputFnGetAttSubtitleTableA60D7A3DArnDF20FE83": "arn:aws:dynamodb:ap-south-1:087967639890:table/SubtitleTable",
+    "VideoProcessingApiEndpoint9EFE1B95": "https://s0qkwpfc4b.execute-api.ap-south-1.amazonaws.com/prod/",
+    "SubtitleTableName": "SubtitleTable",
+    "EC2PublicIP": "43.205.94.74",
+    "ExportsOutputRefSubtitleTableA60D7A3D05B1C837": "SubtitleTable"
+  }
+}

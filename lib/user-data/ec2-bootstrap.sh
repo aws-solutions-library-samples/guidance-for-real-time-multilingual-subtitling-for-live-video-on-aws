@@ -54,7 +54,7 @@ ExecStart=/usr/bin/node subtitle-processor.js
 Restart=always
 RestartSec=5
 Environment=NODE_ENV=production
-Environment=REGION=us-east-1
+Environment=REGION=\${AWS::Region}
 Environment=DYNAMODB_TABLE=SubtitleTable
 Environment=ID_PIPE=pipe0
 Environment=LANGUAGE_CODE=en-US

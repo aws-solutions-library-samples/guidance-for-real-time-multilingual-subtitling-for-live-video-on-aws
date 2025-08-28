@@ -2,19 +2,22 @@
 
 const { execSync } = require('child_process');
 
+const AWS_REGION = process.env.CDK_DEFAULT_REGION || process.env.AWS_REGION || 'us-east-1';
+
 console.log('Starting deployment configuration update...');
+console.log(`📍 Using region: ${AWS_REGION}`);
 
 // S3 config update
 console.log('📁 Updating S3 config...');
-const bucketName = execSync('aws cloudformation describe-stacks --stack-name VideoPlayerStack --query "Stacks[0].Outputs[?OutputKey==\'ExportsOutputRefvideoplayerbucketB70188454D54F8C6\'].OutputValue" --output text --region us-east-1', { encoding: 'utf8' }).trim();
-execSync(`aws s3 cp lib/front-end/video-player/config.json s3://${bucketName}/config.json --content-type application/json --region us-east-1`);
+const bucketName = execSync(`aws cloudformation describe-stacks --stack-name VideoPlayerStack --query "Stacks[0].Outputs[?OutputKey=='VideoPlayerBucket'].OutputValue" --output text --region ${AWS_REGION}`, { encoding: 'utf8' }).trim();
+execSync(`aws s3 cp lib/front-end/video-player/config.json s3://${bucketName}/config.json --content-type application/json --region ${AWS_REGION}`);
 console.log('✅ S3 config updated');
 
 // MediaPackage 
 console.log('🔍 Getting MediaPackage HLS ingest information...');
 
 const channelInfo = JSON.parse(execSync(
-  'aws mediapackage describe-channel --id "live-streaming-channel" --region us-east-1',
+  `aws mediapackage describe-channel --id "live-streaming-channel" --region ${AWS_REGION}`,
   { encoding: 'utf8' }
 ));
 
@@ -28,25 +31,25 @@ const ingestPassword = primaryIngest.Password;
 console.log('🔄 Updating WebVTT CloudFront origin...');
 
 const webvttDistributionId = execSync(
-  'aws cloudformation describe-stacks --stack-name BaseLiveStreamingStack --query "Stacks[0].Outputs[?OutputKey==\'WebVTTDistributionId\'].OutputValue" --output text --region us-east-1',
+  `aws cloudformation describe-stacks --stack-name BaseLiveStreamingStack --query "Stacks[0].Outputs[?OutputKey=='WebVTTDistributionId'].OutputValue" --output text --region ${AWS_REGION}`,
   { encoding: 'utf8' }
 ).trim();
 
 const currentConfig = JSON.parse(execSync(
-  `aws cloudfront get-distribution-config --id "${webvttDistributionId}" --region us-east-1`,
+  `aws cloudfront get-distribution-config --id "${webvttDistributionId}" --region ${AWS_REGION}`,
   { encoding: 'utf8' }
 ));
 
 currentConfig.DistributionConfig.Origins.Items[0].DomainName = ingestDomain;
 
-execSync(`aws cloudfront update-distribution --id "${webvttDistributionId}" --distribution-config '${JSON.stringify(currentConfig.DistributionConfig)}' --if-match "${currentConfig.ETag}" --region us-east-1`);
+execSync(`aws cloudfront update-distribution --id "${webvttDistributionId}" --distribution-config '${JSON.stringify(currentConfig.DistributionConfig)}' --if-match "${currentConfig.ETag}" --region ${AWS_REGION}`);
 
 console.log(`✅ WebVTT CloudFront origin updated to: ${ingestDomain}`);
 
 // 2. SSM Parameter Store
 console.log('💾 Storing password in SSM Parameter Store...');
 
-execSync(`aws ssm put-parameter --name "/medialive/live-streaming-pw" --value "${ingestPassword}" --type "SecureString" --overwrite --region us-east-1`);
+execSync(`aws ssm put-parameter --name "/medialive/live-streaming-pw" --value "${ingestPassword}" --type "SecureString" --overwrite --region ${AWS_REGION}`);
 
 console.log('✅ Password stored in SSM Parameter Store as "live-streaming-pw"');
 
@@ -56,13 +59,13 @@ console.log('🔄 Updating MediaLive Channel credentials...');
 try {
   // MediaLive Channel ID 
   const mediaLiveChannelId = execSync(
-    'aws cloudformation describe-stacks --stack-name MediaLiveStack --query "Stacks[0].Outputs[?OutputKey==\'MediaLiveChannelId\'].OutputValue" --output text --region us-east-1',
+    `aws cloudformation describe-stacks --stack-name MediaLiveStack --query "Stacks[0].Outputs[?OutputKey=='MediaLiveChannelId'].OutputValue" --output text --region ${AWS_REGION}`,
     { encoding: 'utf8' }
   ).trim();
 
   // MediaLive Channel Config
   const mediaLiveConfig = JSON.parse(execSync(
-    `aws medialive describe-channel --channel-id "${mediaLiveChannelId}" --region us-east-1`,
+    `aws medialive describe-channel --channel-id "${mediaLiveChannelId}" --region ${AWS_REGION}`,
     { encoding: 'utf8' }
   ));
 
@@ -73,7 +76,7 @@ try {
     
     // Get Playback Distribution CloudFront domain (WebVTT Distribution)
     const playbackCloudFrontDomain = execSync(
-      'aws cloudformation describe-stacks --stack-name BaseLiveStreamingStack --query "Stacks[0].Outputs[?OutputKey==\'WebVTTCFDomainName\'].OutputValue" --output text --region us-east-1',
+      `aws cloudformation describe-stacks --stack-name BaseLiveStreamingStack --query "Stacks[0].Outputs[?OutputKey=='WebVTTCFDomainName'].OutputValue" --output text --region ${AWS_REGION}`,
       { encoding: 'utf8' }
     ).trim();
         
@@ -96,7 +99,7 @@ try {
       RoleArn: mediaLiveConfig.RoleArn
     };
 
-    execSync(`aws medialive update-channel --cli-input-json '${JSON.stringify(updateParams)}' --region us-east-1`);
+    execSync(`aws medialive update-channel --cli-input-json '${JSON.stringify(updateParams)}' --region ${AWS_REGION}`);
 
     console.log(`✅ MediaLive Channel credentials updated:`);
     console.log(`   Username: ${ingestUsername}`);
@@ -117,17 +120,17 @@ try {
   
   if (fs.existsSync(vocabularyPath)) {
 
-    execSync(`aws s3 cp ${vocabularyPath} s3://${bucketName}/custom_vocabulary.csv --region us-east-1`);
+    execSync(`aws s3 cp ${vocabularyPath} s3://${bucketName}/custom_vocabulary.csv --region ${AWS_REGION}`);
     console.log('✅ Vocabulary file uploaded to S3');
     
     const vocabularyUri = `s3://${bucketName}/custom_vocabulary.csv`;
     
     try {
-      execSync(`aws transcribe get-vocabulary --vocabulary-name "custom-vocabulary" --region us-east-1`, { stdio: 'ignore' });
-      execSync(`aws transcribe update-vocabulary --vocabulary-name "custom-vocabulary" --language-code "en-US" --vocabulary-file-uri "${vocabularyUri}" --region us-east-1`, { stdio: 'ignore' });
+      execSync(`aws transcribe get-vocabulary --vocabulary-name "custom-vocabulary" --region ${AWS_REGION}`, { stdio: 'ignore' });
+      execSync(`aws transcribe update-vocabulary --vocabulary-name "custom-vocabulary" --language-code "en-US" --vocabulary-file-uri "${vocabularyUri}" --region ${AWS_REGION}`, { stdio: 'ignore' });
       console.log('✅ Custom Vocabulary updated with DisplayAs');
     } catch (describeError) {
-      execSync(`aws transcribe create-vocabulary --vocabulary-name "custom-vocabulary" --language-code "en-US" --vocabulary-file-uri "${vocabularyUri}" --region us-east-1`, { stdio: 'ignore' });
+      execSync(`aws transcribe create-vocabulary --vocabulary-name "custom-vocabulary" --language-code "en-US" --vocabulary-file-uri "${vocabularyUri}" --region ${AWS_REGION}`, { stdio: 'ignore' });
       console.log('✅ Custom Vocabulary created with DisplayAs');
     }
   } else {
@@ -141,8 +144,8 @@ try {
 console.log('🔄 Starting MediaConnect Flow...');
 
 try {
-  const mediaConnectFlowArn = execSync('aws cloudformation describe-stacks --stack-name UDPAudioReceiverStack --query "Stacks[0].Outputs[?OutputKey==\'MediaConnectFlowArn\'].OutputValue" --output text --region us-east-1', { encoding: 'utf8' }).trim();
-  execSync(`aws mediaconnect start-flow --flow-arn "${mediaConnectFlowArn}" --region us-east-1`, { stdio: 'ignore' });
+  const mediaConnectFlowArn = execSync(`aws cloudformation describe-stacks --stack-name UDPAudioReceiverStack --query "Stacks[0].Outputs[?OutputKey=='MediaConnectFlowArn'].OutputValue" --output text --region ${AWS_REGION}`, { encoding: 'utf8' }).trim();
+  execSync(`aws mediaconnect start-flow --flow-arn "${mediaConnectFlowArn}" --region ${AWS_REGION}`, { stdio: 'ignore' });
   console.log('✅ MediaConnect Flow started');
 } catch (error) {
   console.log('⚠️  MediaConnect Flow already running or failed to start');
@@ -153,11 +156,11 @@ console.log('🔄 Starting MediaLive Channel...');
 
 try {
   const mediaLiveChannelId = execSync(
-    'aws cloudformation describe-stacks --stack-name MediaLiveStack --query "Stacks[0].Outputs[?OutputKey==\'MediaLiveChannelId\'].OutputValue" --output text --region us-east-1',
+    `aws cloudformation describe-stacks --stack-name MediaLiveStack --query "Stacks[0].Outputs[?OutputKey=='MediaLiveChannelId'].OutputValue" --output text --region ${AWS_REGION}`,
     { encoding: 'utf8' }
   ).trim();
   
-  execSync(`aws medialive start-channel --channel-id "${mediaLiveChannelId}" --region us-east-1`, { stdio: 'ignore' });
+  execSync(`aws medialive start-channel --channel-id "${mediaLiveChannelId}" --region ${AWS_REGION}`, { stdio: 'ignore' });
   console.log('✅ MediaLive Channel started');
 } catch (error) {
   console.log('⚠️  MediaLive Channel already running or failed to start');
@@ -169,4 +172,3 @@ console.log(`   ✅ CloudFront Origin: ${ingestDomain}`);
 console.log(`   ✅ SSM Parameter "live-streaming-password": [SECURE]`);
 console.log(`   ✅ MediaLive Username: ${ingestUsername}`);
 console.log(`   ✅ MediaConnect Flow: Started`);
-
