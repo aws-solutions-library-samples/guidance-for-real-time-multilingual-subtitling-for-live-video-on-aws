@@ -150,6 +150,10 @@ ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
 ## Instructions
 If you have changed stack and try to redeploy a single stack, please make sure you run 'update-config.js' as well.
 
+ ## To-Do List
+ User should be able to choose language (not hardcoded)
+ Fargate
+
  ## Clean Resources
  1. Stop MediaConnect and MediaLive
  2. CDK destroy --all (Will meet some issues due to Lambda@ and unstopped resources, delete manually)
