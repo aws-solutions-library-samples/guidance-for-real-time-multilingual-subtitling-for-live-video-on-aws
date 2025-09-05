@@ -1,4 +1,4 @@
-// BY Taehoon Kyeong 08.11
+// By. Taehoon Kyeong 08.31
 
 ## Auto Live Subtitling - Real-time Video Subtitle Generation
 
@@ -135,12 +135,14 @@ npm run deploy-all
 - **EC2 ↔ DynamoDB**: Subtitle storage and retrieval
 - **Frontend ↔ API Gateway**: Real-time subtitle polling
 - **CloudFront ↔ MediaPackage**: Global video distribution
+- **Bedrock**: Cross Region Inference
 
 
 ## How to Start
  1. 'npm run deploy-all'   --> cdk deploy --all && node scripts/update-config.js"
 
-2.
+2. Deploy with OBS streaming or local ffmpeg command like below.
+
 ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
   -vcodec libx264 -b:v 2000k -r 25 -vf scale=1920:1080 \
   -acodec aac -strict -2 -ac 2 -ab 128k -ar 48000 \
@@ -151,8 +153,8 @@ ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
 If you have changed stack and try to redeploy a single stack, please make sure you run 'update-config.js' as well.
 
  ## To-Do List
- User should be able to choose language (not hardcoded)
- Fargate
+ 1. User should be able to choose language (not hardcoded)
+ 2. Fargate
 
  ## Clean Resources
  1. Stop MediaConnect and MediaLive

@@ -1,36 +1,36 @@
 {
   "VideoPlayerStack": {
-    "ExportsOutputRefCDNvideoplayer51E3DCFB865566F2": "E3S7R6VJ3XX8J9",
-    "VideoPlayerBucket": "videoplayerstack-videoplayerbucketb7018845-25pr4g7dfnoh",
-    "ExportsOutputFnGetAttvideoplayerbucketB7018845Arn560640BD": "arn:aws:s3:::videoplayerstack-videoplayerbucketb7018845-25pr4g7dfnoh",
-    "CDNvideoplayerurl": "https://deurgne1enftf.cloudfront.net/",
-    "ExportsOutputFnGetAttCDNvideoplayer51E3DCFBDomainName4A1E4930": "deurgne1enftf.cloudfront.net",
-    "ExportsOutputRefvideoplayerbucketB70188454D54F8C6": "videoplayerstack-videoplayerbucketb7018845-25pr4g7dfnoh"
-  },
-  "UDPAudioReceiverStack": {
-    "ApiGatewayUrl": "https://opjkfmqr69.execute-api.us-east-1.amazonaws.com/prod/",
-    "ExportsOutputFnGetAttSubtitleTableA60D7A3DArnDF20FE83": "arn:aws:dynamodb:us-east-1:087967639890:table/SubtitleTable",
-    "VideoProcessingApiEndpoint9EFE1B95": "https://opjkfmqr69.execute-api.us-east-1.amazonaws.com/prod/",
-    "SubtitleTableName": "SubtitleTable",
-    "EC2PublicIP": "13.220.68.99",
-    "ExportsOutputRefSubtitleTableA60D7A3D05B1C837": "SubtitleTable"
+    "ExportsOutputRefCDNvideoplayer51E3DCFB865566F2": "E3BV184SR8JHUJ",
+    "VideoPlayerBucket": "videoplayerstack-videoplayerbucketb7018845-3orq3ccu6maf",
+    "ExportsOutputFnGetAttvideoplayerbucketB7018845Arn560640BD": "arn:aws:s3:::videoplayerstack-videoplayerbucketb7018845-3orq3ccu6maf",
+    "CDNvideoplayerurl": "https://d3dly1tdg7v8lp.cloudfront.net/",
+    "ExportsOutputFnGetAttCDNvideoplayer51E3DCFBDomainName4A1E4930": "d3dly1tdg7v8lp.cloudfront.net",
+    "ExportsOutputRefvideoplayerbucketB70188454D54F8C6": "videoplayerstack-videoplayerbucketb7018845-3orq3ccu6maf"
   },
   "CognitoStack": {
-    "loginurl": "https://auto-live-subtitling-087967639890.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=1609rqpiq77to01jq9c5at3doc&response_type=token&scope=openid&redirect_uri=https://deurgne1enftf.cloudfront.net/"
+    "loginurl": "https://auto-live-subtitling-442426879932.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=3353s4rlktbj7lor48d52bs70p&response_type=token&scope=openid&redirect_uri=https://d3dly1tdg7v8lp.cloudfront.net/"
+  },
+  "UDPAudioReceiverStack": {
+    "ApiGatewayUrl": "https://03unn5ayo0.execute-api.us-east-1.amazonaws.com/prod/",
+    "ExportsOutputFnGetAttSubtitleTableA60D7A3DArnDF20FE83": "arn:aws:dynamodb:us-east-1:442426879932:table/SubtitleTable",
+    "VideoProcessingApiEndpoint9EFE1B95": "https://03unn5ayo0.execute-api.us-east-1.amazonaws.com/prod/",
+    "SubtitleTableName": "SubtitleTable",
+    "EC2PublicIP": "44.198.168.174",
+    "ExportsOutputRefSubtitleTableA60D7A3D05B1C837": "SubtitleTable"
   },
   "BaseLiveStreamingStack": {
     "MediaPackageIngestEndpointId": "live-streaming-channel",
     "MediaPackageChannelId": "live-streaming-channel",
-    "CFDomainName": "d1v8wmwhowp6ts.cloudfront.net",
-    "WebVTTDistributionId": "EWDKTEJ8FDIK5",
-    "MediaPackageDomain": "63050ee307b58b8f.mediapackage.us-east-1.amazonaws.com",
-    "WebVTTApiEndpoint9818DD9A": "https://gvadpxfoek.execute-api.us-east-1.amazonaws.com/prod/",
-    "HLSEndpointURL": "d1v8wmwhowp6ts.cloudfront.net",
-    "WebVTTCFDomainName": "d3vsy6ley0sbjx.cloudfront.net",
-    "WebVTTApiUrl": "https://63050ee307b58b8f.mediapackage.us-east-1.amazonaws.com/out/v1/99de6cf26eb547e2b8e222b6ef3f553d/index.m3u8"
+    "CFDomainName": "d1udf5sxdedwnb.cloudfront.net",
+    "WebVTTDistributionId": "E1VRNXM41AG64E",
+    "MediaPackageDomain": "547f72e6652371c3.mediapackage.us-east-1.amazonaws.com",
+    "WebVTTApiEndpoint9818DD9A": "https://0w9avkwxwg.execute-api.us-east-1.amazonaws.com/prod/",
+    "HLSEndpointURL": "d1udf5sxdedwnb.cloudfront.net",
+    "WebVTTCFDomainName": "d1rjovcclsf8jp.cloudfront.net",
+    "WebVTTApiUrl": "https://547f72e6652371c3.mediapackage.us-east-1.amazonaws.com/out/v1/88f160d2cf894a9e84431a041ae97fe1/index.m3u8"
   },
   "MediaLiveStack": {
-    "MediaLiveChannelArn": "arn:aws:medialive:us-east-1:087967639890:channel:3986148",
-    "MediaLiveChannelId": "3986148"
+    "MediaLiveChannelArn": "arn:aws:medialive:us-east-1:442426879932:channel:8494922",
+    "MediaLiveChannelId": "8494922"
   }
 }

@@ -1,11 +1,5 @@
-#!/bin/bash
-apt-get update -y
-apt-get install -y amazon-ssm-agent awscli
-systemctl enable amazon-ssm-agent
-systemctl start amazon-ssm-agent
-
 # Install Node.js 20 (Ubuntu)
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 apt-get install -y nodejs
 
 # Install FFmpeg 6.x (latest static build)
@@ -47,7 +41,7 @@ After=network.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/opt/subtitle-processor
-ExecStart=/usr/bin/node subtitle-processor.js
+ExecStart=/usr/bin/env node subtitle-processor.js
 Restart=always
 RestartSec=5
 Environment=NODE_ENV=production

@@ -1,0 +1,30 @@
+{
+  "sourceLanguage": "en",
+  "targetLanguages": [
+    {
+      "code": "en",
+      "name": "English",
+      "description": "English"
+    },
+    {
+      "code": "ko", 
+      "name": "Korean",
+      "description": "Korean"
+    },
+    {
+      "code": "es",
+      "name": "Spanish", 
+      "description": "Spanish"
+    },
+    {
+      "code": "de",
+      "name": "German",
+      "description": "German"
+    },
+    {
+      "code": "hi",
+      "name": "Hindi",
+      "description": "Hindi"
+    }
+  ]
+}
