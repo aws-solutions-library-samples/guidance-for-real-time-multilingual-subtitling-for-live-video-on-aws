@@ -78,7 +78,7 @@
                                 preload="auto"
                                 data-setup='{"inactivityTimeout": 0, "userActions": { "click": false }, "responsive": true, "fill": true}'>
                             </video>
-                            <div id="subtitle-display-1" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold;">
+                            <div id="subtitle-display-1" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold; pointer-events: none; z-index: 1;">
                                 <!-- 자막이 여기에 표시됩니다 -->
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                                 preload="auto"
                                 data-setup='{"inactivityTimeout": 0, "userActions": { "click": false }, "responsive": true, "fill": true}'>
                             </video>
-                            <div id="subtitle-display-2" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold;">
+                            <div id="subtitle-display-2" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold; pointer-events: none; z-index: 1;">
                                 <!-- 자막이 여기에 표시됩니다 -->
                             </div>
                         </div>
@@ -120,7 +120,7 @@
                                 preload="auto"
                                 data-setup='{"inactivityTimeout": 0, "userActions": { "click": false }, "responsive": true, "fill": true}'>
                             </video>
-                            <div id="subtitle-display-3" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold;">
+                            <div id="subtitle-display-3" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold; pointer-events: none; z-index: 1;">
                                 <!-- 자막이 여기에 표시됩니다 -->
                             </div>
                         </div>
@@ -141,7 +141,7 @@
                                 preload="auto"
                                 data-setup='{"inactivityTimeout": 0, "userActions": { "click": false }, "responsive": true, "fill": true}'>
                             </video>
-                            <div id="subtitle-display-4" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold;">
+                            <div id="subtitle-display-4" class="position-absolute bottom-0 start-0 end-0 text-center p-2 text-white" style="background: rgba(0,0,0,0.7); font-size: 1.1rem; font-weight: bold; pointer-events: none; z-index: 1;">
                                 <!-- 자막이 여기에 표시됩니다 -->
                             </div>
                         </div>
@@ -178,6 +178,13 @@
                         <path d="m6.271 5.055.001.003.452 4.402a.5.5 0 0 0 .757.365L12 7.674a.5.5 0 0 0 0-.866L7.481 4.657a.5.5 0 0 0-.757.365l-.453 4.033z"/>
                     </svg>
                     Start Live Events
+                </button>
+                <button id="video-stop-btn" class="btn ms-3" style="background-color: #dc3545; border-color: #dc3545; color: white; font-weight: bold;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-circle me-2" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M5 6.5A1.5 1.5 0 0 1 6.5 5h3A1.5 1.5 0 0 1 11 6.5v3A1.5 1.5 0 0 1 9.5 11h-3A1.5 1.5 0 0 1 5 9.5v-3z"/>
+                    </svg>
+                    Stop & Refresh
                 </button>
                 <ul class="nav navbar-nav">
                         <li class="nav-item">

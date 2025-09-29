@@ -50,7 +50,7 @@ Environment=DYNAMODB_TABLE=SubtitleTable
 Environment=LANGUAGE_CODE=en-US
 Environment=ENABLE_TRANSLATION=true
 Environment=SOURCE_LANGUAGE=en
-Environment=CAPTION_LANGUAGES=en,hi,es,ko
+Environment=CAPTION_LANGUAGES=en,de,es,it,ko,hi
 Environment=VOCABULARY_NAME=custom-vocabulary
 
 
