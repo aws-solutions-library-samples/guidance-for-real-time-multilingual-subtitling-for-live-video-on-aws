@@ -91,6 +91,9 @@ The solution is built using AWS CDK and consists of multiple interconnected stac
 
 ## Prerequisite
 Make sure CDK is initialized before deployment.
+Install CDK CLI: npm install -g aws-cdk
+CDK bootstrap: cdk bootstrap aws://ACCOUNT-ID/us-east-1
+• **Important**: USe us-east-1 as Lambda@Edge is supported only in us-east-1
 
 ## Deployment
 
@@ -104,14 +107,19 @@ npm run deploy-all
 
 ## How to Start after Deployment
 
-1. Start live streaming with OBS (Option1)
-2. Local ffmpeg command like below. (Option2)
+1. From CloudFormation template, find cloudfront url for access(You'll be redirected to Cognito login screen)
+2. Register account in Cognito and login
+3. Make sure Mediaconnect flow and Medialive channel are activated and started
+4. Go to MediaConnect --> flows and find input url
+5. Start live streaming with OBS (Option1) or local ffmpeg command like below. (Option2)
 
 ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
   -vcodec libx264 -b:v 2000k -r 25 -vf scale=1920:1080 \
   -acodec aac -strict -2 -ac 2 -ab 128k -ar 48000 \
   -f mpegts \
   "srt://yourMediaConnectIP:3088?mode=caller"
+
+6. After few seconds, click 'Start stream' to see the live stream.
 
 
  ## What you need to know
@@ -131,4 +139,9 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
+
+## Solution Owner
+Sanjay Singh
+TaeHoon Kyeong 
+Berhard Widtmann
 
