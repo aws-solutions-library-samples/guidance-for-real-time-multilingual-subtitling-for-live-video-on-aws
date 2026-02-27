@@ -1,0 +1,58 @@
+{
+    "header": {
+        "title": "Unlocking new audience markets with automatic localization for live sports",
+        "subtitle": "Provide realtime subtitling and translation from incoming live video source, while improving word accuracy with generative AI.",
+        "demourl": "/demos/automatic-localization-live-sports/demo.html",
+        "labels": [
+            "IBC2025",
+            "MediaPackage",
+            "MediaLive",
+            "Subtitling",
+            "Livestream",
+            "GEN-AI",
+            "CloudFront",
+            "Lambda"
+ 
+        ],
+        "categories": [
+            "Monetization"
+        ],
+        "image": "/demos/automatic-localization-live-sports/preview.png"
+    },
+    "overview": {
+        "description": "Broadcasters and Streaming providers can enhance content delivery with automatic translation and subtitling workflows",
+        "video": "/demos/tmp/Ads-Right-Meow(Show-Me-Catparty).mp4",
+        "subpoints": [
+            {
+                "header": "Realtime",
+                "paragraph": "Broadcasters and streaming providers can deliver subtitles in real time to expand their global reach."
+            },
+            {
+                "header": "Scalability",
+                "paragraph": "AWS serverless compute, Amazon DynamoDB, and Amazon CloudFront enable service providers to effortlessly scale their services and flexibly support multiple languages for translation."
+            },
+            {
+                "header": "Localized experiences",
+                "paragraph": "Generative AI delivers culturally resonant and nuanced translations tailored to each language, providing truly localized experiences."
+            }
+        ]
+    },
+    "architecture": {
+        "description": "",
+        "markdown": "",
+        "tabs": [
+        {
+            "label": "Architecture",
+            "url": "/demos/automatic-localization-live-sports/demo.html",
+            "default": "true"
+        }
+        ]
+    },
+    "followup": {
+        "description": "",
+        "qr": "",
+        "links": [
+           
+        ]
+    }
+}

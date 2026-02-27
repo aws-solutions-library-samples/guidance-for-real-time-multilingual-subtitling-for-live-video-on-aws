@@ -2,7 +2,7 @@
   "name": "@amzn/auto-live-subtitling",
   "version": "0.1.0",
   "description": "",
-  "author": "bwidtman@amazon.de",
+  "author": "Taehooon,Sanjay",
   "license": "UNLICENSED",
   "repository": "ssh://git.amazon.com/pkg/Auto_live_subtitling",
   "homepage": "https://code.amazon.com/packages/Auto_live_subtitling",
@@ -10,14 +10,15 @@
     "clean": "rm -rf dist && rm -rf node_modules",
     "prepublishOnly": "npm run build && npm run test",
     "cdk": "cdk",
-    "test": "jest"
+    "test": "jest",
+    "deploy-all": "cdk deploy --all && node scripts/update-config.js"
   },
   "bin": {
     "auto-live-subtitling": "bin/auto-live-subtitling.js"
   },
   "jest": {
     "testMatch": [
-        "**/**.test.js"
+      "**/**.test.js"
     ]
   },
   "files": [],
@@ -28,7 +29,8 @@
     "jest": "^29.5.0"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.93.0",
+    "@aws-sdk/client-transcribe-streaming": "^3.859.0",
+    "aws-cdk-lib": "2.177.0",
     "constructs": "^10.0.0",
     "xmlbuilder": "^15.1.1"
   }

@@ -260,3 +260,264 @@ pre {
   .cls-7 {
     fill: #32489b;
   }    
+/* Subtitle section styling */
+.subtitle-section {
+    margin-top: 20px;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.subtitle-container {
+    font-family: 'AmazonEmber', Helvetica, Arial, sans-serif;
+    min-height: 120px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 1.4em;
+    line-height: 1.5;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subtitle-placeholder {
+    color: #6c757d;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+.subtitle-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    padding: 0 20px;
+    display: none;
+}
+
+/* Active subtitle styling */
+.subtitle-container.active-subtitle {
+    background-color: #f8f9fa;
+    border-left: 4px solid #ec7211;
+}
+
+.subtitle-container.active-subtitle .subtitle-placeholder {
+    display: none;
+}
+
+.subtitle-container.active-subtitle .subtitle-text {
+    display: block;
+    animation: subtitleAppear 0.3s ease-in-out;
+}
+
+/* Language selector styling */
+.language-selector {
+    z-index: 10;
+}
+
+.language-selector select {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    font-family: 'AmazonEmber', Helvetica, Arial, sans-serif;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.language-selector select:focus {
+    outline: none;
+    border-color: #ec7211;
+    box-shadow: 0 0 0 0.2rem rgba(236, 114, 17, 0.25);
+}
+
+/* Subtitle animation */
+@keyframes subtitleAppear {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Language-specific subtitle styling */
+.subtitle-container[data-language="ko"] .subtitle-text {
+    font-family: 'AmazonEmber', 'Malgun Gothic', sans-serif;
+}
+
+.subtitle-container[data-language="ja"] .subtitle-text {
+    font-family: 'AmazonEmber', 'Hiragino Kaku Gothic Pro', sans-serif;
+}
+
+.subtitle-container[data-language="zh"] .subtitle-text {
+    font-family: 'AmazonEmber', 'Microsoft YaHei', sans-serif;
+}
+
+/* Subtitle emphasis */
+.subtitle-text em {
+    font-style: normal;
+    color: #ec7211;
+    font-weight: 600;
+}
+
+/* Subtitle speaker identification */
+.subtitle-speaker {
+    font-weight: bold;
+    color: #32489b;
+    margin-right: 5px;
+}
+
+/* Subtitle transition effects */
+.subtitle-fade-in {
+    animation: subtitleFadeIn 0.5s ease forwards;
+}
+
+.subtitle-fade-out {
+    animation: subtitleFadeOut 0.5s ease forwards;
+}
+
+@keyframes subtitleFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes subtitleFadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Control buttons styling */
+.control-buttons {
+    margin-top: 15px;
+}
+
+.control-buttons .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.control-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.control-buttons .btn-primary {
+    background-color: #ec7211;
+    border-color: #ec7211;
+}
+
+.control-buttons .btn-primary:hover {
+    background-color: #eb5f07;
+    border-color: #eb5f07;
+}
+
+.control-buttons .btn-secondary {
+    background-color: #495c91;
+    border-color: #495c91;
+}
+
+.control-buttons .btn-secondary:hover {
+    background-color: #32489b;
+    border-color: #32489b;
+}/* Subtitle toggle button styles */
+#video-start-btn.active {
+    background-color: #32489b;
+    border-color: #32489b;
+    box-shadow: 0 0 0 0.25rem rgba(50, 72, 155, 0.5);
+}
+
+#video-start-btn.active:hover {
+    background-color: #293c82;
+    border-color: #293c82;
+}
+
+/* Enhanced toggle state visual indication */
+#video-start-btn {
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#video-start-btn .bi-cc-circle {
+    transition: all 0.3s ease;
+}
+
+#video-start-btn.active .bi-cc-circle {
+    fill: #4CAF50;
+    transform: scale(1.2);
+}
+
+/* Subtle animation for toggle state change */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+#video-start-btn.active {
+    animation: pulse 0.3s ease-in-out;
+}
+
+/* Subtitle display animation */
+@keyframes subtitleFade {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+#subtitle-display:not(:empty) {
+    animation: subtitleFade 0.3s ease-in-out;
+}/* S
+ubtitle toggle button styles */
+#video-start-btn {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#video-start-btn.active {
+    background-color: #32489b;
+    border-color: #32489b;
+    box-shadow: 0 0 0 0.25rem rgba(50, 72, 155, 0.5);
+}
+
+#video-start-btn.active:hover {
+    background-color: #293c82;
+    border-color: #293c82;
+}
+
+/* Toggle indicator */
+#video-start-btn::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #fff;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#video-start-btn.active::after {
+    opacity: 1;
+    background-color: #4CAF50;
+}
+
+/* Improve button focus state for accessibility */
+#video-start-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(236, 114, 17, 0.5);
+}
+
+#video-start-btn.active:focus {
+    box-shadow: 0 0 0 0.25rem rgba(50, 72, 155, 0.5);
+}
+
