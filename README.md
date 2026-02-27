@@ -1,6 +1,5 @@
-// By. Taehoon Kyeong 08.31
 
-## Auto Live Subtitling - Real-time Video Subtitle Generation
+## Auto Live Multilingual Subtitling - Real-time Video Subtitle Generation
 
 This project provides an automated live subtitling solution that generates real-time subtitles for video streams using AWS services. The system processes live video streams, extracts audio, performs speech-to-text transcription, and delivers synchronized subtitles to viewers.
 
@@ -8,50 +7,41 @@ This project provides an automated live subtitling solution that generates real-
 
 The solution is built using AWS CDK and consists of multiple interconnected stacks that work together to provide end-to-end live subtitling functionality.
 
+![Alt text](Architecture.png)
+
 ## AWS Resources and Stack Configuration
 
 ### 1. BaseLiveStreamingStack
 **Purpose**: Core live streaming infrastructure with MediaLive and MediaPackage
 
 **Resources Created**:
-- **MediaConnect Flow**: Signal acquisition for live video input
 - **MediaPackage Channel (v1)**: Live video packaging and distribution
 - **MediaPackage HLS Endpoint**: HLS streaming endpoint with 2-second segments
-- **MediaLive Channel**: Live video encoding with multiple quality outputs (1080p, 720p, 540p)
-- **MediaLive Input**: MP4 file input for video processing
 - **CloudFront Distribution**: Global content delivery with caching policies
 - **Lambda@Edge Function**: WebVTT augmentation for subtitle integration
 - **IAM Roles**: MediaLive service permissions for MediaPackage and MediaConnect access
 
 **Key Features**:
-- Single pipeline MediaLive channel with H.264 encoding
 - Multi-bitrate adaptive streaming (1080p/720p/540p)
 - Timecode embedding for subtitle synchronization
-- CloudFront distribution with CORS support
 
 ### 2. UDPAudioReceiverStack
 **Purpose**: Audio processing and speech-to-text transcription infrastructure
 
 **Resources Created**:
 - **VPC**: Isolated network environment with public/private subnets
-- **ECS Fargate Cluster**: Container orchestration for audio processing
-- **ECS Fargate Service**: Containerized UDP audio receiver application
-- **Network Load Balancer**: Load balancing for UDP (port 7950) and TCP (port 8080) traffic
+ -**EC2**: Compute service for realtime transcription and genAI based translation
 - **DynamoDB Table**: Subtitle storage with TTL and GSI for session-based queries
-- **ECR Repository Reference**: Container image repository for audio receiver
 - **API Gateway**: REST API for video processing control
 - **Lambda Functions**:
   - **ProcessVideoLambda**: Video processing initiation and MediaLive integration
   - **ResetLambda**: System reset and cleanup operations
-- **EventBridge Rule**: MediaLive channel state change detection
 - **Security Groups**: Network access control for Fargate services
 
 **Key Features**:
 - Real-time UDP audio stream processing
 - Amazon Transcribe integration for speech-to-text
 - DynamoDB-based subtitle storage with session management
-- Auto-scaling Fargate services
-- MediaLive channel lifecycle management
 
 ### 3. VideoPlayerStack
 **Purpose**: Web-based video player frontend hosting
@@ -86,19 +76,11 @@ The solution is built using AWS CDK and consists of multiple interconnected stac
 **Resources Created**:
 - **MediaLive Channel**: Live video encoding with H.264 codec
 - **MediaLive Input**: MP4 file input for video processing
-- **IAM Role**: MediaLive service permissions for MediaPackage and MediaConnect access
-- **Multi-Language Caption Outputs**: WebVTT subtitle generation for 5 languages
-- **Video Output**: Single 1080p H.264 encoded stream
-- **SSM Parameter Integration**: Secure credential management for MediaPackage authentication
+- **MediaConnect Flow**: Signal acquisition for live video input(SRT)authentication
 
 **Key Features**:
 - Single pipeline MediaLive channel configuration
-- Multi-language subtitle support (English, Korean, Spanish, German, Hindi)
-- WebVTT format subtitle generation with proper language codes
-- Automatic MediaPackage integration with secure authentication
-- Timecode embedding for precise subtitle synchronization
-- HLS output with 2-second segment duration
-
+- MediaConnect for live content ingestion
 
 ### 6. DeployStack
 **Purpose**: Frontend deployment and configuration management
@@ -107,41 +89,29 @@ The solution is built using AWS CDK and consists of multiple interconnected stac
 - **S3 Bucket Deployment**: Automated frontend asset deployment
 - **Configuration Management**: Dynamic config.json generation
 
-## System Workflow
-
-1. **Video Input**: Live video stream enters through MediaLive input
-2. **Video Processing**: MediaLive encodes video into multiple bitrates
-3. **Audio Extraction**: Fargate container extracts audio via UDP stream
-4. **Speech Recognition**: Amazon Transcribe converts audio to text
-5. **Subtitle Storage**: Transcribed text stored in DynamoDB with timing
-6. **Video Distribution**: MediaPackage delivers HLS stream via CloudFront
-7. **Subtitle Synchronization**: Frontend polls API for real-time subtitles
-8. **User Experience**: Viewers see synchronized video and subtitles
+## Prerequisite
+Make sure CDK is initialized before deployment.
+Install CDK CLI: npm install -g aws-cdk
+CDK bootstrap: cdk bootstrap aws://ACCOUNT-ID/us-east-1
+• **Important**: USe us-east-1 as Lambda@Edge is supported only in us-east-1
 
 ## Deployment
 
 The system deploys as interconnected CDK stacks with proper dependency management:
 
+
 ```bash
+npm install
 npm run deploy-all
 ```
 
+## How to Start after Deployment
 
-## Key Integrations
-
-- **MediaLive ↔ MediaPackage**: Live video encoding and packaging
-- **MediaLive ↔ Fargate**: Audio stream extraction via UDP
-- **EC2 ↔ Transcribe**: Real-time speech-to-text processing
-- **EC2 ↔ DynamoDB**: Subtitle storage and retrieval
-- **Frontend ↔ API Gateway**: Real-time subtitle polling
-- **CloudFront ↔ MediaPackage**: Global video distribution
-- **Bedrock**: Cross Region Inference
-
-
-## How to Start
- 1. 'npm run deploy-all'   --> cdk deploy --all && node scripts/update-config.js"
-
-2. Deploy with OBS streaming or local ffmpeg command like below.
+1. From CloudFormation template, find cloudfront url for access(You'll be redirected to Cognito login screen)
+2. Register account in Cognito and login
+3. Make sure Mediaconnect flow and Medialive channel are activated and started
+4. Go to MediaConnect --> flows and find input url
+5. Start live streaming with OBS (Option1) or local ffmpeg command like below. (Option2)
 
 ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
   -vcodec libx264 -b:v 2000k -r 25 -vf scale=1920:1080 \
@@ -149,13 +119,29 @@ ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
   -f mpegts \
   "srt://yourMediaConnectIP:3088?mode=caller"
 
-## Instructions
-If you have changed stack and try to redeploy a single stack, please make sure you run 'update-config.js' as well.
+6. After few seconds, click 'Start stream' to see the live stream.
 
- ## To-Do List
- 1. User should be able to choose language (not hardcoded)
- 2. Fargate
+
+ ## What you need to know
+ 1. Language options are preconfigured in 'lib/medialive-stack.js', lib/user-data/ec2-bootstrap.sh  and /lib/IBC2025_Subtitle_v3.js. If you want to test with different languages, make sure to configure language options before deployment. Default version displays "en,de,es,it,ko,hi"
+
+ 2. /lib/custom_vocabulary.csv is for 'Track and Field' event. If you want to try different sports event with custom vocabulary capability, please update the file. (Custom vocabulary is deployed automatically with the name 'custom-vocabulary') 
 
  ## Clean Resources
  1. Stop MediaConnect and MediaLive
  2. CDK destroy --all (Will meet some issues due to Lambda@ and unstopped resources, delete manually)
+
+
+## Security
+
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+
+## License
+
+This library is licensed under the MIT-0 License. See the LICENSE file.
+
+## Solution Owner
+Sanjay Singh
+TaeHoon Kyeong 
+Berhard Widtmann
+
