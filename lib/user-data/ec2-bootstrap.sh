@@ -1,3 +1,9 @@
+# Wait for network to be ready
+until curl -s --connect-timeout 3 https://deb.nodesource.com > /dev/null 2>&1; do
+  echo "Waiting for network..." >> /var/log/userdata.log
+  sleep 2
+done
+
 # Install Node.js 20 (Ubuntu)
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 apt-get install -y nodejs
@@ -50,7 +56,7 @@ Environment=DYNAMODB_TABLE=SubtitleTable
 Environment=LANGUAGE_CODE=en-US
 Environment=ENABLE_TRANSLATION=true
 Environment=SOURCE_LANGUAGE=en
-Environment=CAPTION_LANGUAGES=en,de,es,it,ko,hi
+Environment=LANGUAGE_CONFIG_TABLE=LanguageConfigTable
 Environment=VOCABULARY_NAME=custom-vocabulary
 
 
