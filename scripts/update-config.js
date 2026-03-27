@@ -116,14 +116,14 @@ try {
 console.log('📚 Creating Custom Vocabulary...');
 try {
   const fs = require('fs');
-  const vocabularyPath = 'lib/custom_vocabulary.csv'; //Switch to different csv file name
-  
+  const vocabularyPath = 'lib/custom_vocabulary.txt';
+
   if (fs.existsSync(vocabularyPath)) {
 
-    execSync(`aws s3 cp ${vocabularyPath} s3://${bucketName}/custom_vocabulary.csv --region ${AWS_REGION}`);
+    execSync(`aws s3 cp ${vocabularyPath} s3://${bucketName}/custom_vocabulary.txt --region ${AWS_REGION}`);
     console.log('✅ Vocabulary file uploaded to S3');
-    
-    const vocabularyUri = `s3://${bucketName}/custom_vocabulary.csv`;
+
+    const vocabularyUri = `s3://${bucketName}/custom_vocabulary.txt`;
     
     try {
       execSync(`aws transcribe get-vocabulary --vocabulary-name "custom-vocabulary" --region ${AWS_REGION}`, { stdio: 'ignore' });
@@ -134,7 +134,7 @@ try {
       console.log('✅ Custom Vocabulary created with DisplayAs');
     }
   } else {
-    console.log('⚠️ custom_vocabulary.csv file not found');
+    console.log('⚠️ custom_vocabulary.txt file not found');
   }
 } catch (error) {
   console.log('⚠️ Custom Vocabulary failed:', error.message);

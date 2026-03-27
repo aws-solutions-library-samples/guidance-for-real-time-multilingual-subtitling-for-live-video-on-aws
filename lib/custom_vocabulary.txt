@@ -1,0 +1,195 @@
+Phrase	SoundsLike	IPA	DisplayAs
+sprint			sprint
+marathon			marathon
+hurdles			hurdles
+steeplechase			steeplechase
+javelin			javelin
+discus			discus
+shotput			shotput
+relay			relay
+baton			baton
+handoff			handoff
+athletics			athletics
+decathlon			decathlon
+heptathlon			heptathlon
+pentathlon			pentathlon
+indoor			indoor
+outdoor			outdoor
+pace			pace
+kick			kick
+surge			surge
+breakaway			breakaway
+pack			pack
+peloton			peloton
+curve			curve
+straightaway			straightaway
+stagger			stagger
+scratch			scratch
+disqualification			disqualification
+runway			runway
+approach			approach
+takeoff			takeoff
+landing			landing
+foul			foul
+attempt			attempt
+implement			implement
+sector			sector
+cage			cage
+circle			circle
+crossbar			crossbar
+standards			standards
+uprights			uprights
+pit			pit
+anemometer			anemometer
+starter			starter
+official			official
+referee			referee
+judge			judge
+timekeeper			timekeeper
+announcer			announcer
+commentator			commentator
+analyst			analyst
+athlete			athlete
+competitor			competitor
+runner			runner
+sprinter			sprinter
+thrower			thrower
+jumper			jumper
+hurdler			hurdler
+vaulter			vaulter
+walker			walker
+coach			coach
+trainer			trainer
+physiotherapist			physiotherapist
+stretching			stretching
+training			training
+workout			workout
+interval			interval
+recovery			recovery
+taper			taper
+peak			peak
+form			form
+technique			technique
+stride			stride
+cadence			cadence
+turnover			turnover
+breathing			breathing
+endurance			endurance
+speed			speed
+power			power
+strength			strength
+flexibility			flexibility
+agility			agility
+coordination			coordination
+balance			balance
+timing			timing
+rhythm			rhythm
+momentum			momentum
+acceleration			acceleration
+deceleration			deceleration
+velocity			velocity
+biomechanics			biomechanics
+aerodynamics			aerodynamics
+drag			drag
+resistance			resistance
+altitude			altitude
+temperature			temperature
+humidity			humidity
+conditions			conditions
+weather			weather
+headwind			headwind
+tailwind			tailwind
+crosswind			crosswind
+spikes			spikes
+uniform			uniform
+stopwatch			stopwatch
+pistol			pistol
+commands			commands
+ready			ready
+steady			steady
+recall			recall
+warning			warning
+caution			caution
+disqualified			disqualified
+withdrew			withdrew
+injury			injury
+medical			medical
+stretcher			stretcher
+ambulance			ambulance
+doping			doping
+WADA			WADA
+IAAF			IAAF
+USATF			USATF
+NCAA			NCAA
+Olympics			Olympics
+Paralympics			Paralympics
+meet			meet
+competition			competition
+championship			championship
+tournament			tournament
+event			event
+discipline			discipline
+category			category
+masters			masters
+youth			youth
+junior			junior
+senior			senior
+elite			elite
+professional			professional
+amateur			amateur
+collegiate			collegiate
+club			club
+team			team
+individual			individual
+squad			squad
+roster			roster
+entry			entry
+registration			registration
+seeding			seeding
+ranking			ranking
+results			results
+standings			standings
+leaderboard			leaderboard
+scoreboard			scoreboard
+medal			medal
+trophy			trophy
+award			award
+prize			prize
+ceremony			ceremony
+podium			podium
+anthem			anthem
+flag			flag
+celebration			celebration
+Robinson			Robinson
+Santos			Santos
+Bassett			Bassett
+Dean			Dean
+Nielsen			Nielsen
+Nugent			Nugent
+McLaughlin			McLaughlin
+Paulino			Paulino
+Franklin-Field			Franklin Field
+Grand-Slam			Grand Slam
+Diamond-League			Diamond League
+LSU			LSU
+Penn			Penn
+Harvard			Harvard
+Stanford			Stanford
+clocking			clocking
+drive-phase			drive phase
+transition			transition
+peripheral-vision			peripheral vision
+top-speed			top speed
+wind-legal			wind legal
+split-time			split time
+lap-time			lap time
+qualifying			qualifying
+backstretch			backstretch
+homestretch			home stretch
+starting-blocks			starting blocks
+finish-line			finish line
+personal-best			personal best
+season-best			season best
+world-record			world record
+false-start			false start
+photo-finish			photo finish
