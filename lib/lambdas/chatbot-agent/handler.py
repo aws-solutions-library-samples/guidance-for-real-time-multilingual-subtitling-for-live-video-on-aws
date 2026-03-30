@@ -3,7 +3,10 @@ import os
 import re
 from strands import Agent
 from strands.models import BedrockModel
-from tools import list_languages, add_language, remove_language, get_system_status
+from tools import (
+    list_languages, add_language, remove_language, get_system_status,
+    set_translation_style, add_translation_mapping, get_translation_mappings, search_subtitles
+)
 
 model = BedrockModel(
     model_id="us.amazon.nova-lite-v1:0",
@@ -13,10 +16,21 @@ model = BedrockModel(
 SYSTEM_PROMPT = """You are a live subtitle management assistant for a real-time multilingual subtitling system.
 
 Your capabilities:
+
+**Language Management:**
 - List currently active and available subtitle languages
 - Add new subtitle languages (activate translation)
 - Remove subtitle languages (deactivate translation)
 - Check system status (slots, capacity)
+
+**Translation Quality:**
+- Set translation style (formal, casual, technical, energetic)
+- Add translation mappings to control how specific terms are translated
+- View current translation mappings for each language
+
+**Subtitle Search:**
+- Search subtitle content across all languages
+- Return matching segments with timestamps
 
 Rules:
 - The system supports up to 20 simultaneous subtitle languages
@@ -26,6 +40,12 @@ Rules:
 - Respond in the same language the user is speaking
 - Be concise - this is a chat widget, not a document
 - Do NOT use <thinking> tags or any internal reasoning in your responses
+
+Translation Styles:
+- **formal**: Professional, broadcast-standard language
+- **casual**: Relaxed, conversational tone
+- **technical**: Precise, technical terminology
+- **energetic**: Exciting sports commentary style (default)
 
 Response formatting:
 - When listing languages, ALWAYS use a numbered list with flag emoji and status indicator
@@ -44,7 +64,10 @@ ja=🇯🇵Japanese, fr=🇫🇷French, pt=🇧🇷Portuguese, zh=🇨🇳Chines
 vi=🇻🇳Vietnamese, ru=🇷🇺Russian, pl=🇵🇱Polish, nl=🇳🇱Dutch, sv=🇸🇪Swedish, tr=🇹🇷Turkish,
 id=🇮🇩Indonesian, ms=🇲🇾Malay"""
 
-TOOLS = [list_languages, add_language, remove_language, get_system_status]
+TOOLS = [
+    list_languages, add_language, remove_language, get_system_status,
+    set_translation_style, add_translation_mapping, get_translation_mappings, search_subtitles
+]
 
 # Session history storage (in-memory, per Lambda instance)
 sessions = {}
