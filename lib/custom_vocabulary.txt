@@ -117,10 +117,10 @@ medical			medical
 stretcher			stretcher
 ambulance			ambulance
 doping			doping
-WADA			WADA
-IAAF			IAAF
-USATF			USATF
-NCAA			NCAA
+W.A.D.A.			WADA
+I.A.A.F.			IAAF
+U.S.A.T.F.			USATF
+N.C.A.A.			NCAA
 Olympics			Olympics
 Paralympics			Paralympics
 meet			meet
@@ -171,7 +171,7 @@ Paulino			Paulino
 Franklin-Field			Franklin Field
 Grand-Slam			Grand Slam
 Diamond-League			Diamond League
-LSU			LSU
+L.S.U.			LSU
 Penn			Penn
 Harvard			Harvard
 Stanford			Stanford

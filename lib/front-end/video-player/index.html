@@ -281,7 +281,7 @@
             <div id="chatbot-quick-replies" class="chatbot-quick-replies"></div>
             <div class="chatbot-input">
                 <div class="d-flex align-items-center gap-2 p-3">
-                    <input type="text" id="chatbot-input-field" placeholder="Enter a message..." onkeydown="if(event.key==='Enter')sendChatMessage()">
+                    <input type="text" id="chatbot-input-field" placeholder="Enter a message..." onkeydown="if(event.key==='Enter'&&!event.isComposing)sendChatMessage()">
                     <button class="send-btn" onclick="sendChatMessage()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 16 16">
                             <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.5.5 0 0 1-.928-.067L6.854 9.854a.5.5 0 0 1 .024-.703L12.293 4H7.707a.5.5 0 0 1 0-1H14a.5.5 0 0 1 .354.146"/>
