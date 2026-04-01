@@ -1,0 +1,11 @@
+{
+  "name": "subtitle-processor",
+  "version": "1.0.0",
+  "description": "ECS Fargate subtitle processor container",
+  "main": "subtitle-processor.js",
+  "dependencies": {
+    "@aws-sdk/client-transcribe-streaming": "^3.859.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.859.0",
+    "aws-sdk": "^2.1692.0"
+  }
+}

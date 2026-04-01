@@ -7,6 +7,7 @@ const { BaseLiveStreamingStack } = require('../lib/base-live-streaming-stack');
 const { MediaLiveStack } = require('../lib/medialive-stack');
 const { UDPAudioReceiverStack } = require('../lib/udp-audio-receiver-stack');
 const { DeployStack } = require('../lib/deploy-stack');
+const { EcsSubtitleProcessorStack } = require('../lib/ecs-subtitle-processor-stack');
 
 
 const app = new cdk.App();
@@ -22,6 +23,12 @@ const media_live = new MediaLiveStack(app, 'MediaLiveStack', {});
 media_live.addDependency(base_live_streaming);
 
 base_live_streaming.addDependency(udp_audio_receiver);
+
+// ECS Fargate subtitle processor (parallel to EC2 — Phase 3 testing)
+const ecs_subtitle_processor = new EcsSubtitleProcessorStack(app, 'EcsSubtitleProcessorStack', {
+  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+});
+ecs_subtitle_processor.addDependency(udp_audio_receiver);
 
 const deploy = new DeployStack(app, 'DeployStack', {
   video_player: video_player,
