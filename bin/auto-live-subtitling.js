@@ -26,7 +26,7 @@ base_live_streaming.addDependency(udp_audio_receiver);
 
 // ECS Fargate subtitle processor (parallel to EC2 — Phase 3 testing)
 const ecs_subtitle_processor = new EcsSubtitleProcessorStack(app, 'EcsSubtitleProcessorStack', {
-  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+  vpc: udp_audio_receiver.vpc,
 });
 ecs_subtitle_processor.addDependency(udp_audio_receiver);
 
