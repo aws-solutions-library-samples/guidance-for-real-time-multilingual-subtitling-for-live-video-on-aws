@@ -1,148 +1,151 @@
+# Auto Live Multilingual Subtitling
 
-## Auto Live Multilingual Subtitling - Real-time Video Subtitle Generation
-
-This project provides an automated live subtitling solution that generates real-time subtitles for video streams using AWS services. The system processes live video streams, extracts audio, performs speech-to-text transcription, and delivers synchronized subtitles to viewers.
+Real-time multilingual subtitle generation for live video streams using AWS services. The system processes live video, performs speech-to-text transcription with Amazon Transcribe, translates via Amazon Bedrock, and delivers synchronized subtitles across 20 languages.
 
 ## Architecture Overview
 
-The solution is built using AWS CDK and consists of multiple interconnected stacks that work together to provide end-to-end live subtitling functionality.
+Built with AWS CDK and **7 interconnected stacks**:
 
-![Alt text](Architecture.png)
+![Architecture](Architecture.png)
 
-## AWS Resources and Stack Configuration
+**Key Features:**
+- ECS Fargate-based audio processing (4 vCPU, 8 GB RAM)
+- Real-time transcription and AI-powered translation
+- Dynamic language management via REST API
+- AI chatbot assistant (Strands Agent)
+- 4-screen simultaneous playback with per-screen language selection
+- 20 pre-configured languages (4 active by default: en, de, es, it)
 
-### 1. BaseLiveStreamingStack
-**Purpose**: Core live streaming infrastructure with MediaLive and MediaPackage
+---
 
-**Resources Created**:
-- **MediaPackage Channel (v1)**: Live video packaging and distribution
-- **MediaPackage HLS Endpoint**: HLS streaming endpoint with 2-second segments
-- **CloudFront Distribution**: Global content delivery with caching policies
-- **Lambda@Edge Function**: WebVTT augmentation for subtitle integration
-- **IAM Roles**: MediaLive service permissions for MediaPackage and MediaConnect access
+## Stack Overview
 
-**Key Features**:
-- Multi-bitrate adaptive streaming (1080p/720p/540p)
-- Timecode embedding for subtitle synchronization
+### 1. VideoPlayerStack
+S3 + CloudFront hosting for web frontend with 2x2 video grid, per-screen language selection, and draggable AI chatbot panel.
 
-### 2. UDPAudioReceiverStack
-**Purpose**: Audio processing and speech-to-text transcription infrastructure
+### 2. CognitoStack
+User authentication via OAuth2 with email-based sign-in.
 
-**Resources Created**:
-- **VPC**: Isolated network environment with public/private subnets
- -**EC2**: Compute service for realtime transcription and genAI based translation
-- **DynamoDB Table**: Subtitle storage with TTL and GSI for session-based queries
-- **API Gateway**: REST API for video processing control
-- **Lambda Functions**:
-  - **ProcessVideoLambda**: Video processing initiation and MediaLive integration
-  - **ResetLambda**: System reset and cleanup operations
-- **Security Groups**: Network access control for Fargate services
+### 3. UDPAudioReceiverStack
+VPC, DynamoDB tables (SubtitleTable + LanguageConfigTable), API Gateway, and Lambda functions for language management and AI chatbot.
 
-**Key Features**:
-- Real-time UDP audio stream processing
-- Amazon Transcribe integration for speech-to-text
-- DynamoDB-based subtitle storage with session management
+### 4. EcsSubtitleProcessorStack ⭐ **Primary Compute**
+- ECS Fargate cluster with Docker container (Node.js + FFmpeg)
+- Network Load Balancer with Elastic IP for MediaConnect RTP input
+- Real-time transcription → Bedrock translation → DynamoDB storage
 
-### 3. VideoPlayerStack
-**Purpose**: Web-based video player frontend hosting
+### 5. BaseLiveStreamingStack
+MediaPackage (HLS), CloudFront distributions (video + subtitles), Lambda@Edge for WebVTT delivery.
 
-**Resources Created**:
-- **S3 Bucket**: Static website hosting for video player frontend
-- **CloudFront Distribution**: CDN for frontend asset delivery
-- **Origin Access Identity**: Secure S3 access from CloudFront
+### 6. MediaLiveStack
+- MediaConnect Flow (SRT listener on port 3088)
+- MediaConnect outputs: Audio → ECS NLB, Video → MediaLive
+- MediaLive channel with 20 pre-configured caption slots
 
-**Key Features**:
-- Responsive web video player interface
-- HLS video playback support
-- Real-time subtitle display
-- CloudFront-accelerated content delivery
+### 7. DeployStack
+Frontend asset deployment and configuration management.
 
-### 4. CognitoStack
-**Purpose**: User authentication and authorization
+---
 
-**Resources Created**:
-- **Cognito User Pool**: User management and authentication
-- **Cognito User Pool Client**: OAuth2 integration for video player
-- **Cognito Domain**: Authentication UI hosting
+## Prerequisites
 
-**Key Features**:
-- OAuth2 implicit grant flow
-- Email-based user authentication
-- Integration with video player frontend
+```bash
+# Required: Node.js 18+, AWS CLI, Docker
+npm install -g aws-cdk
 
-### 5. MediaLiveStack
-**Purpose**: Live video encoding and multi-language subtitle generation
+# Bootstrap CDK (MUST use us-east-1 for Lambda@Edge)
+cdk bootstrap aws://ACCOUNT-ID/us-east-1
+```
 
-**Resources Created**:
-- **MediaLive Channel**: Live video encoding with H.264 codec
-- **MediaLive Input**: MP4 file input for video processing
-- **MediaConnect Flow**: Signal acquisition for live video input(SRT)authentication
+⚠️ All stacks must deploy to **us-east-1** (Lambda@Edge requirement).
 
-**Key Features**:
-- Single pipeline MediaLive channel configuration
-- MediaConnect for live content ingestion
-
-### 6. DeployStack
-**Purpose**: Frontend deployment and configuration management
-
-**Resources Created**:
-- **S3 Bucket Deployment**: Automated frontend asset deployment
-- **Configuration Management**: Dynamic config.json generation
-
-## Prerequisite
-Make sure CDK is initialized before deployment.
-Install CDK CLI: npm install -g aws-cdk
-CDK bootstrap: cdk bootstrap aws://ACCOUNT-ID/us-east-1
-• **Important**: USe us-east-1 as Lambda@Edge is supported only in us-east-1
+---
 
 ## Deployment
-
-The system deploys as interconnected CDK stacks with proper dependency management:
-
 
 ```bash
 npm install
 npm run deploy-all
 ```
 
-## How to Start after Deployment
+**Deployment time**: ~15-20 minutes
 
-1. From CloudFormation template, find cloudfront url for access(You'll be redirected to Cognito login screen)
-2. Register account in Cognito and login
-3. Make sure Mediaconnect flow and Medialive channel are activated and started
-4. Go to MediaConnect --> flows and find input url
-5. Start live streaming with OBS (Option1) or local ffmpeg command like below. (Option2)
+**Stack order** (managed by CDK):
+1. VideoPlayer → Cognito → UDPAudioReceiver
+2. BaseLiveStreaming + EcsSubtitleProcessor (parallel)
+3. MediaLive → Deploy
 
+---
+
+## How to Start
+
+### 1. Access Video Player
+Navigate to CloudFront URL from CloudFormation outputs → Register/Login via Cognito
+
+### 2. Start AWS Services
+```bash
+# Start MediaConnect Flow
+aws mediaconnect start-flow --flow-arn <FLOW_ARN>
+
+
+### 3. Stream Live Video
+
+**Option 1: OBS Studio**
+- Server: `srt://MEDIACONNECT_IP:3088`
+
+**Option 2: FFmpeg**
+```bash
 ffmpeg -re -stream_loop -1 -i ~/sample.mp4 \
   -vcodec libx264 -b:v 2000k -r 25 -vf scale=1920:1080 \
-  -acodec aac -strict -2 -ac 2 -ab 128k -ar 48000 \
-  -f mpegts \
-  "srt://yourMediaConnectIP:3088?mode=caller"
+  -acodec aac -ac 2 -ab 128k -ar 48000 \
+  -f mpegts "srt://MEDIACONNECT_IP:3088?mode=caller"
+```
 
-6. After few seconds, click 'Start stream' to see the live stream.
+### 4. View Stream
+Wait 5-10 seconds → Click **"Start Live Events"** → Subtitles appear automatically
 
+---
 
- ## What you need to know
- 1. Language options are preconfigured in 'lib/medialive-stack.js', lib/user-data/ec2-bootstrap.sh  and /lib/IBC2025_Subtitle_v3.js. If you want to test with different languages, make sure to configure language options before deployment. Default version displays "en,de,es,it,ko,hi"
+## Language Management
 
- 2. /lib/custom_vocabulary.csv is for 'Track and Field' event. If you want to try different sports event with custom vocabulary capability, please update the file. (Custom vocabulary is deployed automatically with the name 'custom-vocabulary') 
-
- ## Clean Resources
- 1. Stop MediaConnect and MediaLive
- 2. CDK destroy --all (Will meet some issues due to Lambda@ and unstopped resources, delete manually)
+**Default Active**: en, de, es, it (4 of 20 languages)
 
 
-## Security
+## Monitoring
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+**ECS Logs:**
+```bash
+aws logs tail /ecs/subtitle-processor --follow
+```
+---
+
+## Clean Up
+
+```bash
+# Stop services first
+aws mediaconnect stop-flow --flow-arn <FLOW_ARN>
+aws medialive stop-channel --channel-id <CHANNEL_ID>
+
+# Destroy stacks
+cdk destroy --all
+```
+
+⚠️ Lambda@Edge may require manual deletion (wait 1-2 hours for CloudFront release).
+
+---
+
+## Migration Notes
+
+**Legacy EC2** (disabled): `/lib/legacy_subtitle_processor_ec2.js`
+
+
+---
 
 ## License
 
-This library is licensed under the MIT-0 License. See the LICENSE file.
+MIT-0 License. See [LICENSE](LICENSE).
 
-## Solution Owner
-Sanjay Singh
-TaeHoon Kyeong 
-Berhard Widtmann
-Yongzhe Ren
+## Contributors
 
+Owner: TaeHoon Kyeong, Sanjay Singh
+Contributor: Bernhard Widtman, Yongzhe Ren
