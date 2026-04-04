@@ -26,10 +26,6 @@ const base_live_streaming = new BaseLiveStreamingStack(app, 'BaseLiveStreamingSt
   env: stackEnv
 });
 
-// MediaLive stack depends on BaseLiveStreamingStack
-const media_live = new MediaLiveStack(app, 'MediaLiveStack', { env: stackEnv });
-media_live.addDependency(base_live_streaming);
-
 base_live_streaming.addDependency(udp_audio_receiver);
 
 // ECS Fargate subtitle processor (parallel to EC2 — Phase 3 testing)
@@ -38,6 +34,12 @@ const ecs_subtitle_processor = new EcsSubtitleProcessorStack(app, 'EcsSubtitlePr
   env: stackEnv
 });
 ecs_subtitle_processor.addDependency(udp_audio_receiver);
+
+// MediaLive stack depends on BaseLiveStreamingStack AND EcsSubtitleProcessorStack
+// (MediaConnect imports ECS NLB EIP address)
+const media_live = new MediaLiveStack(app, 'MediaLiveStack', { env: stackEnv });
+media_live.addDependency(base_live_streaming);
+media_live.addDependency(ecs_subtitle_processor);
 
 const deploy = new DeployStack(app, 'DeployStack', {
   video_player: video_player,
