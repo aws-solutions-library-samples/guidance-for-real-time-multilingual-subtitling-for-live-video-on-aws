@@ -9,6 +9,7 @@ from tools import (
     set_translation_style, add_translation_mapping, get_translation_mappings, search_subtitles,
     set_screen_language, get_screen_mapping, _get_current_screen_mapping
 )
+import tools as tools_module
 
 
 def _detect_language(text):
@@ -90,8 +91,13 @@ Rules:
 - English (en) is the source language and cannot be removed
 - When a user mentions a language, map it to the correct ISO 639-1 code
 - When a user says "screen 1", "screen1", "스크린1", or similar, extract the screen number (1-4)
-- When asked to show a language on a screen, first add_language if not active, then set_screen_language
-- After ADDING a language (add_language), always suggest screen assignment. Example: "Korean subtitles activated! Which screen (1-4) would you like to display them on?" or "한국어 자막이 활성화되었습니다! 어떤 스크린(1~4)에 표시할까요?"
+- **Screen assignment flow:**
+  1. If the language is not active, call add_language first
+  2. Then call set_screen_language to assign the screen
+  3. If set_screen_language returns status 'assigned' → confirm: "스크린 전환 완료!"
+  4. If set_screen_language returns status 'pending' → tell the user: "자막 데이터 준비 중입니다. 데이터가 확인되면 자동으로 스크린에 반영됩니다!" (The frontend will poll and send a [SYSTEM] message when data is ready)
+- **[SYSTEM] messages**: When you receive a message starting with [SYSTEM], it is an automated notification from the frontend. For example "[SYSTEM] Korean subtitle data ready for screen 3" means subtitle data is now available. When you receive this, call set_screen_language with the specified screen and language to complete the switch, and confirm to the user.
+- After ADDING a language with add_language (without screen assignment), always suggest screen assignment. Example: "한국어 자막이 활성화되었습니다! 어떤 스크린(1~4)에 표시할까요?"
 - After REMOVING a language (remove_language), do NOT suggest screen assignment. Just confirm the removal.
 - Always confirm the action result to the user
 - When the user says "remove X" or "delete X" or "X 제거" or "X 삭제", map X to the correct language code and call remove_language. Common mappings: Korean→ko, German→de, Spanish→es, Italian→it, Japanese→ja, French→fr, Chinese→zh, Arabic→ar, Thai→th, Hindi→hi, Portuguese→pt, Russian→ru, Vietnamese→vi, Polish→pl, Dutch→nl, Swedish→sv, Turkish→tr, Indonesian→id, Malay→ms
@@ -156,9 +162,28 @@ def handler(event, context):
     )
 
     try:
-        # Detect user language and always inject reply-language directive
-        detected_lang = _detect_language(user_message)
-        lang_name = LANGUAGE_NAMES.get(detected_lang, detected_lang)
+        # Detect user language and inject reply-language directive
+        # For [SYSTEM] messages, use the language from previous conversation context
+        if user_message.startswith('[SYSTEM]'):
+            # Find the last user language from session history
+            last_lang = 'en'
+            for prev_msg in reversed(messages):
+                if prev_msg.get('role') == 'user':
+                    prev_text = ''
+                    for block in prev_msg.get('content', []):
+                        if isinstance(block, dict) and 'text' in block:
+                            prev_text = block['text']
+                            break
+                        elif isinstance(block, str):
+                            prev_text = block
+                            break
+                    if prev_text and not prev_text.startswith('[SYSTEM]'):
+                        last_lang = _detect_language(prev_text)
+                        break
+            lang_name = LANGUAGE_NAMES.get(last_lang, last_lang)
+        else:
+            detected_lang = _detect_language(user_message)
+            lang_name = LANGUAGE_NAMES.get(detected_lang, detected_lang)
         augmented_message = f"[INSTRUCTION: Reply ENTIRELY in {lang_name}. Do NOT use any other language.]\n\n{user_message}"
 
         result = agent(augmented_message)
@@ -183,6 +208,11 @@ def handler(event, context):
             response_body['screen_mapping'] = screen_mapping
         except Exception:
             pass
+
+        # Check if set_screen_language flagged a pending screen switch
+        if tools_module._pending_screen is not None:
+            response_body['pending_screen'] = tools_module._pending_screen
+            tools_module._pending_screen = None
 
         return _response(200, response_body)
     except Exception as e:

@@ -17,6 +17,9 @@ VOCABULARY_NAME = os.environ.get('VOCABULARY_NAME', 'custom-vocabulary')
 # Special keys in LanguageConfigTable that are not language entries
 _SPECIAL_KEYS = {'SETTINGS', 'TRANSLATION_DICT', 'SCREEN_MAPPING', 'VOCABULARY', 'MODEL_SETTINGS'}
 
+# Module-level state for pending screen (read by handler.py after agent completes)
+_pending_screen = None
+
 
 def _is_language_item(item):
     return item.get('language_code') not in _SPECIAL_KEYS and 'segment_id' in item
@@ -296,7 +299,8 @@ def get_translation_mappings(language_code: str = None) -> dict:
 @tool
 def set_screen_language(screen_id: str, language_code: str) -> dict:
     """Assign a subtitle language to a specific screen display (1-4).
-    This controls which language is shown on each of the 4 video screens.
+    Checks if subtitle data exists before switching. If no data yet, returns
+    status 'pending' so the frontend can poll and notify when ready.
 
     Args:
         screen_id: Screen number, must be '1', '2', '3', or '4'
@@ -310,25 +314,60 @@ def set_screen_language(screen_id: str, language_code: str) -> dict:
     if not item:
         return {'error': f'Unknown language code: {language_code}'}
     if not item.get('active'):
-        return {'error': f'{item["name"]} is not active. Please add it first using add_language.'}
+        return {'error': f'{item["name"]} is not active. Call add_language first.'}
 
+    global _pending_screen
+
+    # Check if subtitle data exists for this language
+    if _check_subtitle_data_exists(language_code):
+        # Data exists — switch immediately
+        mapping = _get_current_screen_mapping()
+        previous_language = mapping.get(screen_id, 'unknown')
+        mapping[screen_id] = language_code
+
+        table.put_item(Item={
+            'language_code': 'SCREEN_MAPPING',
+            'setting_name': 'screen_language_mapping',
+            'mapping': mapping,
+            'active': False
+        })
+
+        _pending_screen = None
+        return {
+            'screen_id': screen_id,
+            'language_code': language_code,
+            'language_name': item['name'],
+            'previous_language': previous_language,
+            'status': 'assigned',
+            'screen_mapping': mapping
+        }
+
+    # No data yet — return pending (frontend will poll and notify)
     mapping = _get_current_screen_mapping()
-    mapping[screen_id] = language_code
-
-    table.put_item(Item={
-        'language_code': 'SCREEN_MAPPING',
-        'setting_name': 'screen_language_mapping',
-        'mapping': mapping,
-        'active': False
-    })
-
+    _pending_screen = {'screen_id': screen_id, 'language_code': language_code}
     return {
         'screen_id': screen_id,
         'language_code': language_code,
         'language_name': item['name'],
-        'status': 'assigned',
+        'status': 'pending',
+        'pending_screen': _pending_screen,
         'screen_mapping': mapping
     }
+
+
+def _check_subtitle_data_exists(language_code):
+    """Check if any subtitle data exists for the given language in SubtitleTable."""
+    try:
+        response = subtitle_table.query(
+            IndexName='id_lang-created_time-index',
+            KeyConditionExpression='id_lang = :lang',
+            ExpressionAttributeValues={':lang': language_code},
+            Limit=1,
+            ScanIndexForward=False
+        )
+        return len(response.get('Items', [])) > 0
+    except Exception:
+        return False
 
 
 @tool
