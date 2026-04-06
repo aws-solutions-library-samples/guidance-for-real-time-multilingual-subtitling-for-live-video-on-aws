@@ -162,28 +162,67 @@ def handler(event, context):
     )
 
     try:
-        # Detect user language and inject reply-language directive
-        # For [SYSTEM] messages, use the language from previous conversation context
+        # Handle [SYSTEM] messages directly — no LLM needed, just update screen mapping
         if user_message.startswith('[SYSTEM]'):
-            # Find the last user language from session history
-            last_lang = 'en'
-            for prev_msg in reversed(messages):
-                if prev_msg.get('role') == 'user':
-                    prev_text = ''
-                    for block in prev_msg.get('content', []):
-                        if isinstance(block, dict) and 'text' in block:
-                            prev_text = block['text']
+            system_match = re.match(r'\[SYSTEM\]\s+(\w+)\s+subtitle data ready for screen\s+(\d+)', user_message)
+            if system_match:
+                lang_code = system_match.group(1)
+                screen_id = system_match.group(2)
+
+                # Directly update SCREEN_MAPPING and clear pending flag
+                mapping = _get_current_screen_mapping()
+                mapping[screen_id] = lang_code
+                tbl = tools_module.table
+                tbl.put_item(Item={
+                    'language_code': 'SCREEN_MAPPING',
+                    'setting_name': 'screen_language_mapping',
+                    'mapping': mapping,
+                    'active': False
+                })
+                # Clear the pending flag so check-subtitle stops returning true
+                tbl.update_item(
+                    Key={'language_code': lang_code},
+                    UpdateExpression='SET needs_pending_screen = :flag',
+                    ExpressionAttributeValues={':flag': False}
+                )
+
+                # Detect language for response
+                last_lang = 'en'
+                for prev_msg in reversed(messages):
+                    if prev_msg.get('role') == 'user':
+                        prev_text = ''
+                        for block in prev_msg.get('content', []):
+                            if isinstance(block, dict) and 'text' in block:
+                                prev_text = block['text']
+                                break
+                            elif isinstance(block, str):
+                                prev_text = block
+                                break
+                        if prev_text and not prev_text.startswith('[SYSTEM]'):
+                            last_lang = _detect_language(prev_text)
                             break
-                        elif isinstance(block, str):
-                            prev_text = block
-                            break
-                    if prev_text and not prev_text.startswith('[SYSTEM]'):
-                        last_lang = _detect_language(prev_text)
-                        break
-            lang_name = LANGUAGE_NAMES.get(last_lang, last_lang)
-        else:
-            detected_lang = _detect_language(user_message)
-            lang_name = LANGUAGE_NAMES.get(detected_lang, detected_lang)
+
+                # Get language name for display
+                resp = tbl.get_item(Key={'language_code': lang_code})
+                lang_name_display = resp.get('Item', {}).get('name', lang_code)
+
+                confirm_messages = {
+                    'ko': f'스크린 {screen_id}에 {lang_name_display} 자막이 반영되었습니다! ✅',
+                    'ja': f'スクリーン{screen_id}に{lang_name_display}字幕が反映されました！ ✅',
+                    'zh': f'屏幕{screen_id}已切换为{lang_name_display}字幕！ ✅',
+                    'en': f'Screen {screen_id} is now showing {lang_name_display} subtitles! ✅',
+                }
+                response_text = confirm_messages.get(last_lang, confirm_messages['en'])
+
+                return _response(200, {
+                    'response': response_text,
+                    'session_id': session_id,
+                    'screen_mapping': mapping
+                })
+
+        # Normal user messages — route through LLM agent
+        detected_lang = _detect_language(user_message)
+        lang_name = LANGUAGE_NAMES.get(detected_lang, detected_lang)
         augmented_message = f"[INSTRUCTION: Reply ENTIRELY in {lang_name}. Do NOT use any other language.]\n\n{user_message}"
 
         result = agent(augmented_message)
@@ -202,17 +241,19 @@ def handler(event, context):
             'session_id': session_id
         }
 
-        # Include screen mapping so frontend can update displays
-        try:
-            screen_mapping = _get_current_screen_mapping()
-            response_body['screen_mapping'] = screen_mapping
-        except Exception:
-            pass
-
         # Check if set_screen_language flagged a pending screen switch
         if tools_module._pending_screen is not None:
             response_body['pending_screen'] = tools_module._pending_screen
             tools_module._pending_screen = None
+            # Do NOT include screen_mapping when pending — frontend should
+            # only switch screens after [SYSTEM] confirms data is ready
+        else:
+            # Include screen mapping so frontend can sync displays
+            try:
+                screen_mapping = _get_current_screen_mapping()
+                response_body['screen_mapping'] = screen_mapping
+            except Exception:
+                pass
 
         return _response(200, response_body)
     except Exception as e:

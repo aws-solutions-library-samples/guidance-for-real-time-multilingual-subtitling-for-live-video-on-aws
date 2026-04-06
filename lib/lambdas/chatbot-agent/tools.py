@@ -1,18 +1,12 @@
 import os
+import time
 import boto3
 from strands import tool
-from decimal import Decimal
 
 dynamodb = boto3.resource('dynamodb')
-lambda_client = boto3.client('lambda')
-s3_client = boto3.client('s3')
-transcribe_client = boto3.client('transcribe')
 
 table = dynamodb.Table(os.environ.get('LANGUAGE_CONFIG_TABLE', 'LanguageConfigTable'))
 subtitle_table = dynamodb.Table(os.environ.get('DYNAMODB_TABLE', 'SubtitleTable'))
-WEBVTT_LAMBDA_NAME = os.environ.get('WEBVTT_LAMBDA_NAME', '')
-VOCABULARY_BUCKET = os.environ.get('VOCABULARY_BUCKET', '')
-VOCABULARY_NAME = os.environ.get('VOCABULARY_NAME', 'custom-vocabulary')
 
 # Special keys in LanguageConfigTable that are not language entries
 _SPECIAL_KEYS = {'SETTINGS', 'TRANSLATION_DICT', 'SCREEN_MAPPING', 'VOCABULARY', 'MODEL_SETTINGS'}
@@ -63,13 +57,10 @@ def add_language(language_code: str) -> dict:
         ExpressionAttributeValues={':val': True}
     )
 
-    verified = _rebuild_language_mapping(language_code, should_be_active=True)
-
     return {
         'language_code': language_code,
         'name': item['name'],
-        'status': 'active',
-        'verified': verified
+        'status': 'active'
     }
 
 
@@ -96,13 +87,10 @@ def remove_language(language_code: str) -> dict:
         ExpressionAttributeValues={':val': False}
     )
 
-    verified = _rebuild_language_mapping(language_code, should_be_active=False)
-
     return {
         'language_code': language_code,
         'name': item['name'],
-        'status': 'inactive',
-        'verified': verified
+        'status': 'inactive'
     }
 
 
@@ -120,63 +108,6 @@ def get_system_status() -> dict:
         'available_slots': len(items) - len(active),
         'active_languages': [{'code': i['language_code'], 'name': i['name']} for i in sorted(active, key=lambda x: x['segment_id'])]
     }
-
-
-def _rebuild_language_mapping(changed_code, should_be_active):
-    """Rebuild LANGUAGE_MAPPING env var on WebVTT Lambda after language change."""
-    if not WEBVTT_LAMBDA_NAME:
-        return False
-
-    import time
-    from botocore.exceptions import ClientError
-
-    # Wait for any in-progress Lambda update to finish before proceeding
-    for _ in range(10):
-        cfg = lambda_client.get_function_configuration(FunctionName=WEBVTT_LAMBDA_NAME)
-        if cfg.get('LastUpdateStatus') != 'InProgress':
-            break
-        time.sleep(1)
-
-    result = table.scan(
-        FilterExpression='active = :active',
-        ExpressionAttributeValues={':active': True}
-    )
-
-    active_languages = sorted(result.get('Items', []), key=lambda x: x['segment_id'])
-    new_mapping = ','.join(f"{l['segment_id']}-{l['language_code']}" for l in active_languages)
-
-    current_config = lambda_client.get_function_configuration(FunctionName=WEBVTT_LAMBDA_NAME)
-    current_env = current_config.get('Environment', {}).get('Variables', {})
-    current_env['LANGUAGE_MAPPING'] = new_mapping
-
-    # Retry update in case of ResourceConflictException
-    for retry in range(3):
-        try:
-            lambda_client.update_function_configuration(
-                FunctionName=WEBVTT_LAMBDA_NAME,
-                Environment={'Variables': current_env}
-            )
-            break
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'ResourceConflictException' and retry < 2:
-                time.sleep(2)
-            else:
-                raise
-
-    for attempt in range(5):
-        time.sleep(1)
-        updated_config = lambda_client.get_function_configuration(FunctionName=WEBVTT_LAMBDA_NAME)
-        updated_mapping = updated_config.get('Environment', {}).get('Variables', {}).get('LANGUAGE_MAPPING', '')
-        last_status = updated_config.get('LastUpdateStatus', '')
-
-        if should_be_active:
-            if f'-{changed_code}' in updated_mapping and last_status == 'Successful':
-                return True
-        else:
-            if f'-{changed_code}' not in updated_mapping and last_status == 'Successful':
-                return True
-
-    return False
 
 
 @tool
@@ -318,56 +249,52 @@ def set_screen_language(screen_id: str, language_code: str) -> dict:
 
     global _pending_screen
 
-    # Check if subtitle data exists for this language
-    if _check_subtitle_data_exists(language_code):
-        # Data exists — switch immediately
-        mapping = _get_current_screen_mapping()
-        previous_language = mapping.get(screen_id, 'unknown')
-        mapping[screen_id] = language_code
+    # Check if this language already has enough recent subtitle data
+    # If yes → switch immediately. If no → pending flow with polling.
+    now_ms = int(time.time() * 1000)
+    recent = subtitle_table.query(
+        IndexName='id_lang-created_time-index',
+        KeyConditionExpression='id_lang = :lang AND created_time > :since',
+        ExpressionAttributeValues={':lang': language_code, ':since': now_ms - 30000},
+        Limit=3,
+        ScanIndexForward=False
+    )
+    has_recent_data = len(recent.get('Items', [])) >= 3
 
+    if has_recent_data:
+        # Language already producing subtitles — switch immediately
+        mapping = _get_current_screen_mapping()
+        mapping[screen_id] = language_code
         table.put_item(Item={
             'language_code': 'SCREEN_MAPPING',
             'setting_name': 'screen_language_mapping',
             'mapping': mapping,
             'active': False
         })
-
-        _pending_screen = None
         return {
             'screen_id': screen_id,
             'language_code': language_code,
             'language_name': item['name'],
-            'previous_language': previous_language,
             'status': 'assigned',
             'screen_mapping': mapping
         }
-
-    # No data yet — return pending (frontend will poll and notify)
-    mapping = _get_current_screen_mapping()
-    _pending_screen = {'screen_id': screen_id, 'language_code': language_code}
-    return {
-        'screen_id': screen_id,
-        'language_code': language_code,
-        'language_name': item['name'],
-        'status': 'pending',
-        'pending_screen': _pending_screen,
-        'screen_mapping': mapping
-    }
-
-
-def _check_subtitle_data_exists(language_code):
-    """Check if any subtitle data exists for the given language in SubtitleTable."""
-    try:
-        response = subtitle_table.query(
-            IndexName='id_lang-created_time-index',
-            KeyConditionExpression='id_lang = :lang',
-            ExpressionAttributeValues={':lang': language_code},
-            Limit=1,
-            ScanIndexForward=False
+    else:
+        # New or inactive language — wait for data via polling
+        table.update_item(
+            Key={'language_code': language_code},
+            UpdateExpression='SET needs_pending_screen = :flag, screen_requested_at = :ts',
+            ExpressionAttributeValues={':flag': True, ':ts': now_ms}
         )
-        return len(response.get('Items', [])) > 0
-    except Exception:
-        return False
+        mapping = _get_current_screen_mapping()
+        _pending_screen = {'screen_id': screen_id, 'language_code': language_code}
+        return {
+            'screen_id': screen_id,
+            'language_code': language_code,
+            'language_name': item['name'],
+            'status': 'pending',
+            'pending_screen': _pending_screen,
+            'screen_mapping': mapping
+        }
 
 
 @tool
