@@ -9,7 +9,6 @@ s3_client = boto3.client('s3')
 transcribe_client = boto3.client('transcribe')
 
 table = dynamodb.Table(os.environ.get('LANGUAGE_CONFIG_TABLE', 'LanguageConfigTable'))
-subtitle_table = dynamodb.Table(os.environ.get('DYNAMODB_TABLE', 'SubtitleTable'))
 WEBVTT_LAMBDA_NAME = os.environ.get('WEBVTT_LAMBDA_NAME', '')
 VOCABULARY_BUCKET = os.environ.get('VOCABULARY_BUCKET', '')
 VOCABULARY_NAME = os.environ.get('VOCABULARY_NAME', 'custom-vocabulary')
@@ -360,77 +359,63 @@ def _get_current_screen_mapping():
     return {'1': 'en', '2': 'de', '3': 'es', '4': 'it'}
 
 
+
+
 @tool
-def search_subtitles(query: str, language_code: str = None) -> dict:
-    """Search subtitle content across all languages and return matching segments with timestamps.
-    Automatically searches all active languages if no specific language is provided.
-    Supports searching in any language including Korean, Japanese, etc.
+def set_translation_model(model_id: str) -> dict:
+    """Set the Bedrock model used for subtitle translation.
 
     Args:
-        query: Text to search for in subtitles (any language)
-        language_code: Optional language to search in (e.g. 'ko', 'en'). If not provided, searches all languages.
+        model_id: Full Bedrock model ID. Valid options:
+                  - 'us.amazon.nova-lite-v1:0' (fast and efficient)
+                  - 'us.amazon.nova-micro-v1:0' (ultra-low latency, fastest)
+                  - 'us.amazon.nova-pro-v1:0' (balanced quality and speed)
+                  - 'us.anthropic.claude-haiku-4-5-20251001-v1:0' (highest quality)
     """
-    if not query or not query.strip():
-        return {'error': 'Search query cannot be empty', 'results': []}
+    valid_models = [
+        'us.amazon.nova-lite-v1:0',
+        'us.amazon.nova-micro-v1:0',
+        'us.amazon.nova-pro-v1:0',
+        'us.anthropic.claude-haiku-4-5-20251001-v1:0'
+    ]
 
-    query_lower = query.strip().lower()
+    if model_id not in valid_models:
+        return {
+            'error': f'Invalid model ID. Must be one of: {", ".join(valid_models)}',
+            'current_model': None
+        }
 
     try:
-        # If language_code specified, filter by it; otherwise scan all
-        if language_code:
-            response = subtitle_table.scan(
-                FilterExpression='id_lang = :lang',
-                ExpressionAttributeValues={':lang': language_code}
-            )
-        else:
-            response = subtitle_table.scan()
-
-        items = response.get('Items', [])
-
-        # Handle pagination for large tables
-        while 'LastEvaluatedKey' in response:
-            if language_code:
-                response = subtitle_table.scan(
-                    FilterExpression='id_lang = :lang',
-                    ExpressionAttributeValues={':lang': language_code},
-                    ExclusiveStartKey=response['LastEvaluatedKey']
-                )
-            else:
-                response = subtitle_table.scan(
-                    ExclusiveStartKey=response['LastEvaluatedKey']
-                )
-            items.extend(response.get('Items', []))
-
-        # Search for query in content
-        matches = []
-        for item in items:
-            content = item.get('content', '')
-            if query_lower in content.lower():
-                start_time = float(item.get('start_time', 0))
-                end_time = float(item.get('end_time', 0))
-
-                matches.append({
-                    'content': content,
-                    'start_time': start_time,
-                    'end_time': end_time,
-                    'language': item.get('id_lang', 'unknown'),
-                    'created_time': item.get('create_htime', '')
-                })
-
-        # Sort by start_time
-        matches.sort(key=lambda x: x['start_time'])
-
-        # Limit to 50 results
-        matches = matches[:50]
+        # Store translation model in LANGUAGE_CONFIG_TABLE using special key
+        table.put_item(Item={
+            'language_code': 'MODEL_SETTINGS',
+            'setting_name': 'translation_model',
+            'value': model_id,
+            'active': False  # Not a language, just a setting
+        })
 
         return {
-            'query': query,
-            'language': language_code or 'all',
-            'results': matches,
-            'total_found': len(matches)
+            'model_id': model_id,
+            'status': 'updated',
+            'message': f'Translation model set to {model_id}. All new translations will use this model.'
+        }
+    except Exception as e:
+        return {'error': f'Failed to update model: {str(e)}'}
+
+
+@tool
+def get_translation_model() -> dict:
+    """Get the currently configured translation model."""
+    try:
+        resp = table.get_item(Key={'language_code': 'MODEL_SETTINGS'})
+        model_id = resp.get('Item', {}).get('value', 'us.amazon.nova-micro-v1:0')
+
+        return {
+            'model_id': model_id,
+            'status': 'active'
         }
     except Exception as e:
         return {
-            'error': f'Search failed: {str(e)}',
-            'results': []
+            'model_id': 'us.amazon.nova-micro-v1:0',
+            'error': str(e)
         }

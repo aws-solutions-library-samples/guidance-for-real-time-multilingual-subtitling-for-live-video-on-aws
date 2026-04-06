@@ -6,8 +6,9 @@ from strands import Agent
 from strands.models import BedrockModel
 from tools import (
     list_languages, add_language, remove_language, get_system_status,
-    set_translation_style, add_translation_mapping, get_translation_mappings, search_subtitles,
-    set_screen_language, get_screen_mapping, _get_current_screen_mapping
+    set_translation_style, add_translation_mapping, get_translation_mappings,
+    set_screen_language, get_screen_mapping, _get_current_screen_mapping,
+    set_translation_model, get_translation_model
 )
 
 
@@ -81,10 +82,6 @@ Your capabilities:
 - View current screen-to-language mapping
 - Example: "Show Korean on screen 1" → set_screen_language('1', 'ko')
 
-**Subtitle Search:**
-- Search subtitle content across all languages
-- Return matching segments with timestamps
-
 Rules:
 - The system supports up to 20 simultaneous subtitle languages
 - English (en) is the source language and cannot be removed
@@ -105,6 +102,13 @@ Translation Styles:
 - **technical**: Precise, technical terminology
 - **energetic**: Exciting sports commentary style (default)
 
+Translation Models:
+- **nova-lite**: Fast and efficient (default)
+- **nova-micro**: Ultra-low latency, fastest
+- **nova-pro**: Balanced quality and speed
+- **claude-haiku**: Highest translation quality
+- When user says "change model to X" or "use nova pro", call set_translation_model with full model ID
+
 Response formatting:
 - When listing languages, ALWAYS use a numbered list with flag emoji and status indicator
 - Format each language as: "NUMBER. FLAG LANGUAGE_NAME (CODE) STATUS"
@@ -124,8 +128,9 @@ id=🇮🇩Indonesian, ms=🇲🇾Malay"""
 
 TOOLS = [
     list_languages, add_language, remove_language, get_system_status,
-    set_translation_style, add_translation_mapping, get_translation_mappings, search_subtitles,
-    set_screen_language, get_screen_mapping
+    set_translation_style, add_translation_mapping, get_translation_mappings,
+    set_screen_language, get_screen_mapping,
+    set_translation_model, get_translation_model
 ]
 
 # Session history storage (in-memory, per Lambda instance)
