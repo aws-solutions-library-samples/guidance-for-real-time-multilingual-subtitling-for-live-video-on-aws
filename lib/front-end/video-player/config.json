@@ -1,4 +1,15 @@
 {
+  "VideoPlayerStack": {
+    "ExportsOutputRefCDNvideoplayer51E3DCFB865566F2": "EQNTNOB87M9E0",
+    "VideoPlayerBucket": "videoplayerstack-videoplayerbucketb7018845-3yjgknhyzane",
+    "ExportsOutputFnGetAttvideoplayerbucketB7018845Arn560640BD": "arn:aws:s3:::videoplayerstack-videoplayerbucketb7018845-3yjgknhyzane",
+    "CDNvideoplayerurl": "https://di2baypck2tfj.cloudfront.net/",
+    "ExportsOutputFnGetAttCDNvideoplayer51E3DCFBDomainName4A1E4930": "di2baypck2tfj.cloudfront.net",
+    "ExportsOutputRefvideoplayerbucketB70188454D54F8C6": "videoplayerstack-videoplayerbucketb7018845-3yjgknhyzane"
+  },
+  "CognitoStack": {
+    "loginurl": "https://auto-live-subtitling-087967639890.auth.us-east-1.amazoncognito.com/oauth2/authorize?client_id=7q5al0sjeq2vv3ogtkn823f3lt&response_type=token&scope=openid&redirect_uri=https://di2baypck2tfj.cloudfront.net/"
+  },
   "UDPAudioReceiverStack": {
     "ApiGatewayUrl": "https://mdurvjlz73.execute-api.us-east-1.amazonaws.com/prod/",
     "ExportsOutputFnGetAttSubtitleTableA60D7A3DArnDF20FE83": "arn:aws:dynamodb:us-east-1:087967639890:table/SubtitleTable",
@@ -9,5 +20,26 @@
     "ExportsOutputRefUdpReceiverVpcPrivateSubnet1SubnetB2EBBAABEC454832": "subnet-08cabbd358d0512c2",
     "ExportsOutputRefSubtitleTableA60D7A3D05B1C837": "SubtitleTable",
     "ExportsOutputRefUdpReceiverVpc95F13902B9621E58": "vpc-07fa32616efcc66c5"
+  },
+  "EcsSubtitleProcessorStack": {
+    "NlbEipAddress": "52.72.46.198",
+    "NlbDnsName": "EcsSub-Subti-eEd8OeaHFnOd-3089d96c7560257e.elb.us-east-1.amazonaws.com",
+    "EcsClusterName": "EcsSubtitleProcessorStack-SubtitleProcessorCluster4DBC54F9-0zQS0VL7j4eD",
+    "EcsServiceName": "EcsSubtitleProcessorStack-SubtitleProcessorService8C6A9E4B-vVThFzYcjL2o"
+  },
+  "BaseLiveStreamingStack": {
+    "MediaPackageIngestEndpointId": "live-streaming-channel",
+    "MediaPackageChannelId": "live-streaming-channel",
+    "CFDomainName": "d3rw4pdbqnj2ow.cloudfront.net",
+    "WebVTTDistributionId": "E3UODWUN1WJCRG",
+    "MediaPackageDomain": "cf98fa7b2ee4450e.mediapackage.us-east-1.amazonaws.com",
+    "WebVTTApiEndpoint9818DD9A": "https://ab9ij5rzij.execute-api.us-east-1.amazonaws.com/prod/",
+    "HLSEndpointURL": "d3rw4pdbqnj2ow.cloudfront.net",
+    "WebVTTCFDomainName": "ddgei2jewyk6i.cloudfront.net",
+    "WebVTTApiUrl": "https://cf98fa7b2ee4450e.mediapackage.us-east-1.amazonaws.com/out/v1/be53e515176d4fa3be1a0740d0befe19/index.m3u8"
+  },
+  "MediaLiveStack": {
+    "MediaLiveChannelArn": "arn:aws:medialive:us-east-1:087967639890:channel:1481695",
+    "MediaLiveChannelId": "1481695"
   }
 }
