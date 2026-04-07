@@ -8,7 +8,8 @@ from tools import (
     list_languages, add_language, remove_language, get_system_status,
     set_translation_style, add_translation_mapping, get_translation_mappings,
     set_screen_language, get_screen_mapping, _get_current_screen_mapping,
-    set_translation_model, get_translation_model
+    set_translation_model, get_translation_model,
+    set_source_language, get_source_language
 )
 import tools as tools_module
 
@@ -85,7 +86,8 @@ Your capabilities:
 
 Rules:
 - The system supports up to 20 simultaneous subtitle languages
-- English (en) is the source language and cannot be removed
+- The current source language cannot be removed from active languages (use get_source_language to check)
+- The source language CAN be changed using set_source_language (e.g., from English to Korean)
 - When a user mentions a language, map it to the correct ISO 639-1 code
 - When a user says "screen 1", "screen1", "스크린1", or similar, extract the screen number (1-4)
 - **Screen assignment flow:**
@@ -115,6 +117,15 @@ Translation Models:
 - **claude-haiku**: Highest translation quality
 - When user says "change model to X" or "use nova pro", call set_translation_model with full model ID
 
+**Source Language (Input Audio Language — NOT subtitle language):**
+- This controls the language of the LIVE AUDIO/VIDEO being broadcast (speech-to-text input)
+- This is completely separate from subtitle languages — subtitles are translations OUTPUT
+- Example: If broadcasting Korean TV, set source to ko-KR. Subtitles will then translate FROM Korean TO other languages.
+- Default source is English (en-US). Use set_source_language/get_source_language to change/check it.
+- Changing source language restarts the transcription session (1-2 second gap)
+- When user says "change source to X", "입력 언어를 X로", "change input language" → call set_source_language
+- Common mappings: English→en-US, Korean→ko-KR, Japanese→ja-JP, Chinese→zh-CN, German→de-DE, Spanish→es-US, French→fr-FR, Italian→it-IT, Portuguese→pt-BR, Hindi→hi-IN, Arabic→ar-SA, Thai→th-TH
+
 Response formatting:
 - When listing languages, ALWAYS use a numbered list with flag emoji and status indicator
 - Format each language as: "NUMBER. FLAG LANGUAGE_NAME (CODE) STATUS"
@@ -136,7 +147,8 @@ TOOLS = [
     list_languages, add_language, remove_language, get_system_status,
     set_translation_style, add_translation_mapping, get_translation_mappings,
     set_screen_language, get_screen_mapping,
-    set_translation_model, get_translation_model
+    set_translation_model, get_translation_model,
+    set_source_language, get_source_language
 ]
 
 # Session history storage (in-memory, per Lambda instance)

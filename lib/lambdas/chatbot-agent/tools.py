@@ -10,7 +10,28 @@ subtitle_table = dynamodb.Table(os.environ.get('DYNAMODB_TABLE', 'SubtitleTable'
 
 
 # Special keys in LanguageConfigTable that are not language entries
-_SPECIAL_KEYS = {'SETTINGS', 'TRANSLATION_DICT', 'SCREEN_MAPPING', 'VOCABULARY', 'MODEL_SETTINGS'}
+_SPECIAL_KEYS = {'SETTINGS', 'TRANSLATION_DICT', 'SCREEN_MAPPING', 'VOCABULARY', 'MODEL_SETTINGS', 'SOURCE_LANGUAGE'}
+
+# Amazon Transcribe Streaming supported languages (language_code → display name)
+TRANSCRIBE_LANGUAGES = {
+    'en-US': 'English (US)', 'en-GB': 'English (UK)', 'en-AU': 'English (Australia)',
+    'en-IN': 'English (India)', 'en-IE': 'English (Ireland)', 'en-AB': 'English (Scottish)',
+    'en-ZA': 'English (South Africa)', 'en-NZ': 'English (New Zealand)', 'en-WL': 'English (Welsh)',
+    'af-ZA': 'Afrikaans', 'ar-AE': 'Arabic (Gulf)', 'ar-SA': 'Arabic (Modern Standard)',
+    'eu-ES': 'Basque', 'ca-ES': 'Catalan', 'zh-CN': 'Chinese (Simplified)',
+    'zh-TW': 'Chinese (Traditional)', 'zh-HK': 'Chinese (Cantonese)',
+    'hr-HR': 'Croatian', 'cs-CZ': 'Czech', 'da-DK': 'Danish', 'nl-NL': 'Dutch',
+    'fa-IR': 'Farsi', 'fi-FI': 'Finnish', 'fr-FR': 'French', 'fr-CA': 'French (Canada)',
+    'gl-ES': 'Galician', 'de-DE': 'German', 'de-CH': 'German (Swiss)',
+    'el-GR': 'Greek', 'he-IL': 'Hebrew', 'hi-IN': 'Hindi', 'id-ID': 'Indonesian',
+    'it-IT': 'Italian', 'ja-JP': 'Japanese', 'ko-KR': 'Korean',
+    'lv-LV': 'Latvian', 'ms-MY': 'Malay', 'no-NO': 'Norwegian',
+    'pl-PL': 'Polish', 'pt-BR': 'Portuguese (Brazil)', 'pt-PT': 'Portuguese (Portugal)',
+    'ro-RO': 'Romanian', 'ru-RU': 'Russian', 'sr-RS': 'Serbian', 'sk-SK': 'Slovak',
+    'so-SO': 'Somali', 'es-ES': 'Spanish (Spain)', 'es-US': 'Spanish (US)',
+    'sv-SE': 'Swedish', 'tl-PH': 'Tagalog', 'th-TH': 'Thai', 'tr-TR': 'Turkish',
+    'uk-UA': 'Ukrainian', 'vi-VN': 'Vietnamese', 'zu-ZA': 'Zulu',
+}
 
 # Module-level state for pending screen (read by handler.py after agent completes)
 _pending_screen = None
@@ -72,8 +93,10 @@ def remove_language(language_code: str) -> dict:
     Args:
         language_code: ISO 639-1 language code (e.g. 'ko' for Korean, 'ja' for Japanese)
     """
-    if language_code == 'en':
-        return {'error': 'Cannot remove source language (en). English is the source language.'}
+    src_resp = table.get_item(Key={'language_code': 'SOURCE_LANGUAGE'})
+    source_short = src_resp.get('Item', {}).get('source_lang_short', 'en')
+    if language_code == source_short:
+        return {'error': f'Cannot remove source language ({language_code}). Change the source language first.'}
 
     resp = table.get_item(Key={'language_code': language_code})
     item = resp.get('Item')
@@ -387,3 +410,68 @@ def get_translation_model() -> dict:
             'model_id': 'us.amazon.nova-micro-v1:0',
             'error': str(e)
         }
+
+
+@tool
+def set_source_language(language_code: str) -> dict:
+    """Set the source language for speech-to-text transcription (Amazon Transcribe).
+    Changing the source language restarts the transcription session, causing a brief 1-2 second gap.
+
+    Args:
+        language_code: Transcribe language code. Common codes:
+                      'en-US' (English US), 'en-GB' (English UK), 'de-DE' (German),
+                      'es-US' (Spanish US), 'es-ES' (Spanish Spain), 'it-IT' (Italian),
+                      'fr-FR' (French), 'ja-JP' (Japanese), 'ko-KR' (Korean),
+                      'zh-CN' (Chinese Simplified), 'zh-TW' (Chinese Traditional),
+                      'pt-BR' (Portuguese Brazil), 'hi-IN' (Hindi), 'ar-SA' (Arabic),
+                      'th-TH' (Thai), 'vi-VN' (Vietnamese), 'ru-RU' (Russian),
+                      'pl-PL' (Polish), 'nl-NL' (Dutch), 'sv-SE' (Swedish),
+                      'tr-TR' (Turkish), 'id-ID' (Indonesian), 'ms-MY' (Malay),
+                      'da-DK' (Danish), 'fi-FI' (Finnish), 'no-NO' (Norwegian),
+                      'cs-CZ' (Czech), 'ro-RO' (Romanian), 'el-GR' (Greek),
+                      'he-IL' (Hebrew), 'fa-IR' (Farsi), 'uk-UA' (Ukrainian),
+                      'hr-HR' (Croatian), 'sk-SK' (Slovak), 'sr-RS' (Serbian),
+                      'lv-LV' (Latvian), 'af-ZA' (Afrikaans), 'zu-ZA' (Zulu),
+                      'so-SO' (Somali), 'tl-PH' (Tagalog), 'gl-ES' (Galician),
+                      'eu-ES' (Basque), 'ca-ES' (Catalan)
+    """
+    if language_code not in TRANSCRIBE_LANGUAGES:
+        return {
+            'error': f'Invalid language code. Must be one of: {", ".join(sorted(TRANSCRIBE_LANGUAGES.keys()))}',
+        }
+
+    short_code = language_code.split('-')[0]
+
+    try:
+        table.put_item(Item={
+            'language_code': 'SOURCE_LANGUAGE',
+            'setting_name': 'source_language',
+            'value': language_code,
+            'source_lang_short': short_code,
+            'active': False
+        })
+        return {
+            'language_code': language_code,
+            'language_name': TRANSCRIBE_LANGUAGES[language_code],
+            'short_code': short_code,
+            'status': 'updated',
+            'message': f'Source language set to {TRANSCRIBE_LANGUAGES[language_code]} ({language_code}). Transcription session will restart with a brief gap.'
+        }
+    except Exception as e:
+        return {'error': f'Failed to update source language: {str(e)}'}
+
+
+@tool
+def get_source_language() -> dict:
+    """Get the currently configured source language for speech-to-text transcription."""
+    try:
+        resp = table.get_item(Key={'language_code': 'SOURCE_LANGUAGE'})
+        item = resp.get('Item', {})
+        lang_code = item.get('value', 'en-US')
+        return {
+            'language_code': lang_code,
+            'language_name': TRANSCRIBE_LANGUAGES.get(lang_code, lang_code),
+            'status': 'active'
+        }
+    except Exception as e:
+        return {'language_code': 'en-US', 'error': str(e)}
