@@ -177,6 +177,12 @@ def add_translation_mapping(original_term: str, target_language: str, translated
         target_language: Target language code (e.g., 'ko' for Korean, 'ja' for Japanese)
         translated_term: How the term should be translated (e.g., '리오넬 메시', '득점')
     """
+    # DEBUG: Log received parameters with proper encoding
+    print(f"[DEBUG] add_translation_mapping called:")
+    print(f"  original_term: {repr(original_term)} | bytes: {original_term.encode('utf-8').hex() if original_term else 'None'}")
+    print(f"  target_language: {repr(target_language)}")
+    print(f"  translated_term: {repr(translated_term)} | bytes: {translated_term.encode('utf-8').hex() if translated_term else 'None'}")
+
     if not original_term or not original_term.strip():
         return {'error': 'Original term cannot be empty'}
     if not target_language or not target_language.strip():
@@ -220,7 +226,7 @@ def add_translation_mapping(original_term: str, target_language: str, translated
 
 
 @tool
-def get_translation_mappings(language_code: str = None) -> dict:
+def get_translation_mappings(language_code: str = None) -> str:
     """Get translation mappings for a specific language or all languages.
 
     Args:
@@ -233,22 +239,24 @@ def get_translation_mappings(language_code: str = None) -> dict:
         if language_code:
             language_code = language_code.lower().strip()
             mappings = all_mappings.get(language_code, {})
-            return {
-                'language': language_code,
-                'mappings': mappings,
-                'total_terms': len(mappings)
-            }
+
+            # Return pre-formatted string so AI cannot hallucinate
+            result = f"Here are the translation mappings for {language_code}:\n\n"
+            for original, translated in mappings.items():
+                result += f"- \"{original}\" → \"{translated}\"\n"
+            result += f"\nTotal terms: {len(mappings)}"
+            return result
         else:
-            # Return all languages
-            return {
-                'all_mappings': all_mappings,
-                'languages': list(all_mappings.keys())
-            }
+            # Return all languages with pre-formatted string
+            result = "Translation mappings:\n\n"
+            for lang, mappings in all_mappings.items():
+                result += f"{lang}:\n"
+                for original, translated in mappings.items():
+                    result += f"  - \"{original}\" → \"{translated}\"\n"
+                result += "\n"
+            return result
     except Exception as e:
-        return {
-            'mappings': {},
-            'error': str(e)
-        }
+        return f"Error: {str(e)}"
 
 
 @tool

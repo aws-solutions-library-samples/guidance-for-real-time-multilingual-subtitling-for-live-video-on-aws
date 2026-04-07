@@ -78,6 +78,7 @@ Your capabilities:
 - Set translation style (formal, casual, technical, energetic)
 - Add translation mappings to control how specific terms are translated
 - View current translation mappings for each language
+- **CRITICAL**: When showing translation mappings from get_translation_mappings tool, display the EXACT terms returned by the tool. Do NOT modify, translate, or hallucinate terms. Show exactly what the tool returns.
 
 **Screen Management:**
 - Assign a specific language to a specific screen (1-4)
@@ -160,6 +161,10 @@ def handler(event, context):
     user_message = body.get('message', '')
     session_id = body.get('session_id', 'default')
 
+    # DEBUG: Log incoming message with proper encoding
+    print(f"[DEBUG] Incoming message: {repr(user_message)}")
+    print(f"[DEBUG] Message bytes: {user_message.encode('utf-8').hex()}")
+
     if not user_message:
         return _response(400, {'error': 'message is required'})
 
@@ -179,6 +184,51 @@ def handler(event, context):
     )
 
     try:
+        # Handle [TOOL:...] messages directly — bypass AI to avoid Korean encoding issues
+        if user_message.startswith('[TOOL:'):
+            tool_match = re.match(r'\[TOOL:(\w+)\](.+)', user_message)
+            if tool_match:
+                tool_name = tool_match.group(1)
+                tool_params_json = tool_match.group(2)
+                print(f"[DEBUG] Direct tool call: {tool_name}")
+                print(f"[DEBUG] Tool params JSON: {repr(tool_params_json)}")
+
+                try:
+                    tool_params = json.loads(tool_params_json)
+                    print(f"[DEBUG] Parsed params: {repr(tool_params)}")
+
+                    # Map tool names to functions
+                    tool_map = {
+                        'add_translation_mapping': add_translation_mapping,
+                        'get_translation_mappings': get_translation_mappings,
+                    }
+
+                    if tool_name in tool_map:
+                        result = tool_map[tool_name](**tool_params)
+                        print(f"[DEBUG] Tool result: {repr(result)}")
+
+                        # Format response message
+                        if isinstance(result, str):
+                            response_text = result
+                        elif isinstance(result, dict):
+                            if 'error' in result:
+                                response_text = f"Error: {result['error']}"
+                            else:
+                                response_text = result.get('message', json.dumps(result, ensure_ascii=False))
+                        else:
+                            response_text = str(result)
+
+                        messages.append({'role': 'user', 'content': user_message})
+                        messages.append({'role': 'assistant', 'content': response_text})
+                        sessions[session_id] = messages
+
+                        return _response(200, {'response': response_text, 'session_id': session_id})
+                    else:
+                        return _response(400, {'error': f'Unknown tool: {tool_name}'})
+                except json.JSONDecodeError as e:
+                    print(f"[ERROR] Failed to parse tool params: {e}")
+                    return _response(400, {'error': f'Invalid tool parameters: {str(e)}'})
+
         # Handle [SYSTEM] messages directly — no LLM needed, just update screen mapping
         if user_message.startswith('[SYSTEM]'):
             system_match = re.match(r'\[SYSTEM\]\s+(\w+)\s+subtitle data ready for screen\s+(\d+)', user_message)
@@ -251,7 +301,29 @@ def handler(event, context):
             oldest = next(iter(sessions))
             del sessions[oldest]
 
-        response_text = re.sub(r'<thinking>.*?</thinking>\s*', '', str(result), flags=re.DOTALL).strip()
+        # Debug: log result type and content
+        print(f"[DEBUG] Agent result type: {type(result)}")
+        print(f"[DEBUG] Agent result: {repr(result)}")
+
+        # Extract text from result
+        if hasattr(result, 'text'):
+            response_text = result.text
+        elif hasattr(result, 'content'):
+            response_text = result.content
+        elif isinstance(result, list) and len(result) > 0:
+            # If result is a list of content blocks
+            response_text = ''
+            for block in result:
+                if isinstance(block, dict) and 'text' in block:
+                    response_text += block['text']
+                elif hasattr(block, 'text'):
+                    response_text += block.text
+                else:
+                    response_text += str(block)
+        else:
+            response_text = str(result)
+
+        response_text = re.sub(r'<thinking>.*?</thinking>\s*', '', response_text, flags=re.DOTALL).strip()
 
         response_body = {
             'response': response_text,
