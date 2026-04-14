@@ -2,7 +2,7 @@
 
 const { execSync } = require('child_process');
 
-const AWS_REGION = process.env.CDK_DEFAULT_REGION || process.env.AWS_REGION || 'us-east-1';
+const AWS_REGION = 'us-east-1';
 
 console.log('Starting deployment configuration update...');
 console.log(`📍 Using region: ${AWS_REGION}`);

@@ -1,5 +1,6 @@
 import os
 import time
+import random
 import boto3
 from strands import tool
 
@@ -111,10 +112,44 @@ def remove_language(language_code: str) -> dict:
         ExpressionAttributeValues={':val': False}
     )
 
+    # Update SCREEN_MAPPING: replace removed language with a random active language
+    reassigned_screens = {}
+    mapping = _get_current_screen_mapping()
+    affected_screens = [sid for sid, lc in mapping.items() if lc == language_code]
+
+    if affected_screens:
+        # Get all active languages (excluding the one being removed)
+        scan_resp = table.scan()
+        all_items = [i for i in scan_resp.get('Items', []) if _is_language_item(i)]
+        active_codes = [i['language_code'] for i in all_items if i.get('active') and i['language_code'] != language_code]
+
+        used_codes = set(lc for sid, lc in mapping.items() if sid not in affected_screens and lc != language_code)
+
+        for sid in affected_screens:
+            available = [c for c in active_codes if c not in used_codes]
+            if available:
+                pick = random.choice(available)
+                mapping[sid] = pick
+                used_codes.add(pick)
+                reassigned_screens[sid] = pick
+            elif active_codes:
+                pick = random.choice(active_codes)
+                mapping[sid] = pick
+                reassigned_screens[sid] = pick
+
+        table.put_item(Item={
+            'language_code': 'SCREEN_MAPPING',
+            'setting_name': 'screen_language_mapping',
+            'mapping': mapping,
+            'active': False
+        })
+
     return {
         'language_code': language_code,
         'name': item['name'],
-        'status': 'inactive'
+        'status': 'inactive',
+        'screen_mapping': mapping,
+        'reassigned_screens': reassigned_screens
     }
 
 
@@ -257,6 +292,64 @@ def get_translation_mappings(language_code: str = None) -> str:
             return result
     except Exception as e:
         return f"Error: {str(e)}"
+
+
+@tool
+def remove_translation_mapping(language_code: str, original_term: str = None) -> dict:
+    """Remove translation mappings. Can remove a single term or all mappings for a language.
+
+    Args:
+        language_code: ISO 639-1 language code (e.g. 'ko' for Korean)
+        original_term: The original term to remove. If not provided, removes ALL mappings for the language.
+    """
+    language_code = language_code.lower().strip()
+
+    try:
+        resp = table.get_item(Key={'language_code': 'TRANSLATION_DICT'})
+        mappings = resp.get('Item', {}).get('mappings', {})
+
+        if language_code not in mappings or not mappings[language_code]:
+            return {'error': f'No translation mappings found for {language_code}'}
+
+        if original_term:
+            original_term = original_term.strip()
+            if original_term not in mappings[language_code]:
+                return {'error': f'Mapping for "{original_term}" not found in {language_code}'}
+            del mappings[language_code][original_term]
+            # Clean up empty language dict
+            if not mappings[language_code]:
+                del mappings[language_code]
+
+            table.put_item(Item={
+                'language_code': 'TRANSLATION_DICT',
+                'setting_name': 'term_mappings',
+                'mappings': mappings,
+                'active': False
+            })
+            return {
+                'language_code': language_code,
+                'removed_term': original_term,
+                'status': 'removed',
+                'message': f'Removed mapping: "{original_term}" from {language_code}'
+            }
+        else:
+            removed_count = len(mappings[language_code])
+            del mappings[language_code]
+
+            table.put_item(Item={
+                'language_code': 'TRANSLATION_DICT',
+                'setting_name': 'term_mappings',
+                'mappings': mappings,
+                'active': False
+            })
+            return {
+                'language_code': language_code,
+                'removed_count': removed_count,
+                'status': 'removed_all',
+                'message': f'Removed all {removed_count} translation mappings for {language_code}'
+            }
+    except Exception as e:
+        return {'error': f'Failed to remove translation mapping: {str(e)}'}
 
 
 @tool

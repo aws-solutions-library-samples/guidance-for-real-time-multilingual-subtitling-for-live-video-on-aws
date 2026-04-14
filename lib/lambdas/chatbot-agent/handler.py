@@ -7,6 +7,7 @@ from strands.models import BedrockModel
 from tools import (
     list_languages, add_language, remove_language, get_system_status,
     set_translation_style, add_translation_mapping, get_translation_mappings,
+    remove_translation_mapping,
     set_screen_language, get_screen_mapping, _get_current_screen_mapping,
     set_translation_model, get_translation_model,
     set_source_language, get_source_language
@@ -147,6 +148,7 @@ id=🇮🇩Indonesian, ms=🇲🇾Malay"""
 TOOLS = [
     list_languages, add_language, remove_language, get_system_status,
     set_translation_style, add_translation_mapping, get_translation_mappings,
+    remove_translation_mapping,
     set_screen_language, get_screen_mapping,
     set_translation_model, get_translation_model,
     set_source_language, get_source_language
@@ -218,8 +220,8 @@ def handler(event, context):
                         else:
                             response_text = str(result)
 
-                        messages.append({'role': 'user', 'content': user_message})
-                        messages.append({'role': 'assistant', 'content': response_text})
+                        messages.append({'role': 'user', 'content': [{'text': user_message}]})
+                        messages.append({'role': 'assistant', 'content': [{'text': response_text}]})
                         sessions[session_id] = messages
 
                         return _response(200, {'response': response_text, 'session_id': session_id})
