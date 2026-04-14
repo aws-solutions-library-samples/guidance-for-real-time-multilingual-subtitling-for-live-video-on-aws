@@ -203,6 +203,7 @@ def handler(event, context):
                     tool_map = {
                         'add_translation_mapping': add_translation_mapping,
                         'get_translation_mappings': get_translation_mappings,
+                        'remove_translation_mapping': remove_translation_mapping,
                     }
 
                     if tool_name in tool_map:
