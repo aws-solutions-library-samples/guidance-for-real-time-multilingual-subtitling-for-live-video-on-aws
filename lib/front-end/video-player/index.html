@@ -42,24 +42,21 @@
             </nav>
         </div>
 
-        <!-- HEADER -->
-        <div class="container-fluid px-0">
-            <div class="row mx-0">
-                <div class="col-12 bg-dark text-light  shadow-sm ">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col text-center" id="header-parent">
-                                <h2 id="header-title">Automatic localization and agent-driven channel operations for Live Events</h2>
-                                <p class="small">Provide realtime subtitling and translation from incoming live video source, while managing channels and improving word accuracy with agents.</p>
-                            </div>
-                        </div>
-                    </div>
+        <!-- HEADER (collapsible) -->
+        <div id="header-wrapper" class="header-collapsed">
+            <button id="header-toggle" onclick="toggleHeader()">
+                <span id="header-toggle-icon">▶</span> <span id="header-toggle-label">Show Title</span>
+            </button>
+            <div id="header-content">
+                <div id="header-parent">
+                    <h2 id="header-title">Automatic localization and agent-driven channel operations for Live Events</h2>
+                    <p class="small">Provide realtime subtitling and translation from incoming live video source, while managing channels and improving word accuracy with agents.</p>
                 </div>
             </div>
         </div>
 
         <!-- PLAYER SECTION -->
-<div class="container-fluid p-2" style="height: calc(100vh - 200px); overflow: hidden;">
+<div id="player-section" class="container-fluid p-2" style="overflow: hidden;">
     <div class="row h-100">
         <!-- 2x2 Video Grid -->
         <div class="col-12 h-100">
